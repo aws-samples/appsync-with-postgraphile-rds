@@ -1,0 +1,24 @@
+{
+  "name": "pg-as-datasource-layer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@graphile-contrib/pg-simplify-inflector": "^6.1.0",
+    "adm-zip": "^0.5.9",
+    "constructs": "^10.0.0",
+    "graphile-build": "^4.12.2",
+    "graphql": "^15.8.0",
+    "pg": "^8.7.3",
+    "postgraphile": "^4.12.9"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@graphile/pg-pubsub": "^4.12.2"
+  }
+}

@@ -1,0 +1,18 @@
+/**/node_modules
+/**/.vscode
+
+# typescript
+/**/lib/**/*.js
+/**/lib/**/*.d.ts
+
+# CDK Context & Staging files
+/**/cdk.context.json
+/**/.cdk.staging/
+/**/cdk.out/
+/**/*.tabl.json
+
+
+#stuff
+/**/vegeta.sh
+/**/*.bin
+/**/output.json
