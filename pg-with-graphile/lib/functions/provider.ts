@@ -39,9 +39,11 @@ export const handler = async (event: any): Promise<any> => {
     const schema = await loadGraphqlSchema(pgPool, PG_SCHEMAS, { writeCache: file })
 
     await Promise.all([updateLayer(file), updateAppSyncAPI(schema)])
-  } catch (error: any) {
+  } catch (error) {
     console.log('oops errors', error)
-    throw new Error(`Failed: ${error.message}`)
+    if (error instanceof Error) {
+      throw new Error(`Failed: ${error.message}`)
+    }
   }
 }
 
@@ -161,7 +163,7 @@ const updateAppSyncAPI = async (schema: GraphQLSchema) => {
       await createOrUpdateSubscriptionResolver(apiId, fieldName)
     }
     console.log('api update done')
-  } catch (error: any) {
+  } catch (error) {
     console.log('errors during schema creation:', error)
   }
 }
@@ -189,8 +191,9 @@ const createOrUpdatePipelineResolver = async (
     const result = await appsyncClient.getResolver({ apiId, typeName, fieldName }).promise()
     // updated pipeline resolver
     // console.log(`Already set: Resolver ${result.resolver?.typeName}.${result.resolver?.fieldName}.`)
-  } catch (error: any) {
-    if (error.code === 'NotFoundException') {
+  } catch (error) {
+    const e = error as Error & { code: string }
+    if (e.code === 'NotFoundException') {
       console.log(`Create resolver ${typeName}.${fieldName} already set`)
       await appsyncClient.createResolver(config).promise()
     } else {
@@ -218,8 +221,9 @@ const createOrUpdateSubscriptionResolver = async (apiId: string, fieldName: stri
     const result = await appsyncClient.getResolver({ apiId, typeName, fieldName }).promise()
     // updated pipeline resolver
     // console.log(`Already set: Resolver ${result.resolver?.typeName}.${result.resolver?.fieldName}.`)
-  } catch (error: any) {
-    if (error.code === 'NotFoundException') {
+  } catch (error) {
+    const e = error as Error & { code: string }
+    if (e.code === 'NotFoundException') {
       console.log(`Create resolver ${typeName}.${fieldName} already set`)
       await appsyncClient.createResolver(config).promise()
     } else {
