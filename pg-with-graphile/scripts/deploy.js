@@ -22,18 +22,6 @@ reqs.forEach((a) => {
   if (!args[a]) throw new Error(`missing required argument: ${a}`)
 })
 
-const cmd = `npm run cdk deploy -- \
--c vpcId=${vpcId} \
---parameters sgId=${sgId} \
---parameters dbProxyArn=${dbProxyArn} \
---parameters dbProxyName=${dbProxyName} \
---parameters dbProxyEndpoint=${endpoint} \
---parameters userName=${args['--username']} \
---parameters database=${args['--database']} \
---parameters schemas=${args['--schemas']} \
--O output.json
-`
-
 const opts = `-c vpcId=${vpcId} \
 --parameters sgId=${sgId} \
 --parameters dbProxyArn=${dbProxyArn} \

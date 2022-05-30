@@ -2,8 +2,8 @@
 /**/.vscode
 
 # typescript
-/**/lib/**/*.js
-/**/lib/**/*.d.ts
+/**/*.js
+/**/*.d.ts
 
 # CDK Context & Staging files
 /**/cdk.context.json
