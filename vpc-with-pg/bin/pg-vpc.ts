@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 import 'source-map-support/register'
 import * as cdk from 'aws-cdk-lib'
+import { Construct } from 'constructs'
 import { PgVpcStack } from '../lib/pg-vpc-stack'
 import { PgRdsStack } from '../lib/pg-rds-stack'
-import { Construct } from 'constructs'
+import { PgSchemaStack } from '../lib/pg-schema-stack'
 
 const tagProps = {
   tags: {
@@ -19,12 +20,22 @@ class RdsPgApp extends Construct {
       cidr: '10.0.0.0/16',
       ...tagProps,
     })
-    new PgRdsStack(app, 'PgRdsStack', {
+    const rdsStack = new PgRdsStack(app, 'PgRdsStack', {
       env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
       vpc: vpcStack.vpc,
       port: 5432,
       stage: id,
       ...tagProps,
+    })
+    new PgSchemaStack(app, 'PgSchemaStack' {
+      env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+      vpc: vpcStack.vpc,
+      stage: id,
+      port: rdsStack.rdsInstance.port,
+      rdsProxy: rdsStack.rdsProxy,
+      sg: rdsStack.dbConnectionGroup,
+      database: rdsStack.rdsInstance.hostname,
+      userName: rdsStack.lambdaRunnerSecret.secretValueFromJson('username').toString()
     })
   }
 }
