@@ -189,12 +189,12 @@ const createOrUpdatePipelineResolver = async (
   try {
     // console.log('start for', typeName, fieldName)
     const result = await appsyncClient.getResolver({ apiId, typeName, fieldName }).promise()
-    // updated pipeline resolver
-    // console.log(`Already set: Resolver ${result.resolver?.typeName}.${result.resolver?.fieldName}.`)
+    console.log(`Update resolver ${typeName}.${fieldName}`)
+    await appsyncClient.updateResolver(config).promise()
   } catch (error) {
     const e = error as Error & { code: string }
     if (e.code === 'NotFoundException') {
-      console.log(`Create resolver ${typeName}.${fieldName} already set`)
+      console.log(`Create resolver ${typeName}.${fieldName}`)
       await appsyncClient.createResolver(config).promise()
     } else {
       console.log('unknown error not handled')
@@ -212,19 +212,21 @@ const createOrUpdateSubscriptionResolver = async (apiId: string, fieldName: stri
     dataSourceName: 'NONE',
     requestMappingTemplate: '{ "version": "2017-02-28", "payload": {} }',
     responseMappingTemplate: [
+      '#if (!$util.isNullOrEmpty($ctx.args.filter))',
       '$extensions.setSubscriptionFilter($util.transform.toSubscriptionFilter($util.parseJson($ctx.args.filter)))',
+      '#end',
       '$util.toJson(null)',
     ].join('\n'),
   }
   try {
     // console.log('start for', typeName, fieldName)
     const result = await appsyncClient.getResolver({ apiId, typeName, fieldName }).promise()
-    // updated pipeline resolver
-    // console.log(`Already set: Resolver ${result.resolver?.typeName}.${result.resolver?.fieldName}.`)
+    console.log(`Update resolver ${typeName}.${fieldName}`)
+    await appsyncClient.updateResolver(config).promise()
   } catch (error) {
     const e = error as Error & { code: string }
     if (e.code === 'NotFoundException') {
-      console.log(`Create resolver ${typeName}.${fieldName} already set`)
+      console.log(`Create resolver ${typeName}.${fieldName}`)
       await appsyncClient.createResolver(config).promise()
     } else {
       console.log('unknown error not handled')

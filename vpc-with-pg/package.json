@@ -8,7 +8,9 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "load": "node ./scripts/load.js",
+    "cleanup-db": "node ./scripts/cleanup.js"
   },
   "devDependencies": {
     "@types/jest": "^26.0.10",
@@ -18,7 +20,8 @@
     "aws-sdk": "^2.1085.0",
     "aws-cdk": "2.17.0",
     "ts-node": "^9.0.0",
-    "typescript": "~3.9.7"
+    "typescript": "~3.9.7",
+    "pg": "^8.7.3"
   },
   "dependencies": {
     "aws-cdk-lib": "2.17.0",

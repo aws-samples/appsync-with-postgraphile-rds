@@ -4,7 +4,7 @@
   "description": "Monorepo Index - vpc-with-pg - pg-with-graphile",
   "main": "index.js",
   "scripts": {
-    "postinstall": "(cd vpc-with-pg && npm install); (cd pg-with-graphile && npm install); (cd pg-with-graphile/lib/layers/pg-as-datasource-layer/nodejs/ && npm install)",
+    "postinstall": "(cd vpc-with-pg && npm install); (cd vpc-with-pg/lib/layers/pg-dbschema-layer/nodejs && npm install); (cd pg-with-graphile && npm install); (cd pg-with-graphile/lib/layers/pg-as-datasource-layer/nodejs/ && npm install)",
     "deploy-vpc-rds": "(cd vpc-with-pg && npm run cdk deploy -- --all -O output.json)",
     "deploy": "cd pg-with-graphile; npm run deploy"
   },

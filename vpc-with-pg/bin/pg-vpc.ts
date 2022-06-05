@@ -27,15 +27,14 @@ class RdsPgApp extends Construct {
       stage: id,
       ...tagProps,
     })
-    new PgSchemaStack(app, 'PgSchemaStack' {
+    new PgSchemaStack(app, 'PgSchemaStack', {
       env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
       vpc: vpcStack.vpc,
       stage: id,
-      port: rdsStack.rdsInstance.port,
+      port: rdsStack.rdsInstance.dbInstanceEndpointPort,
       rdsProxy: rdsStack.rdsProxy,
       sg: rdsStack.dbConnectionGroup,
-      database: rdsStack.rdsInstance.hostname,
-      userName: rdsStack.lambdaRunnerSecret.secretValueFromJson('username').toString()
+      lambdaRunnerSecret: rdsStack.lambdaRunnerSecret,
     })
   }
 }
