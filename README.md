@@ -4,7 +4,18 @@
 
 This repo provides a CDK-based solution that allows you to create an AWS AppSync API from a defined Postgres database in AWS RDS.
 
-For more information about the solution and a detailed walk-through, please see the related blog.
+The solution leverages PostGraphile to help create an AppSync-comptabile schema and then uses Lambda function to resolve the query operations from Appsync. The solution does not require writing any code and works with any Postgres database (e.g.: RDS Aurora Postgres).
+
+1. Deploy the CDK solution.
+2. Operator triggers update process by calling the  `provider` function
+3. `provider` function retrieves schema information from RDS database
+4. `provider` updates the Lambda layer attached to the `resolver` Lambda function and updates the AppSync API schema
+5. A GraphQL request is made to the AppSync API
+6. AppSync authorizes the request with Cognito (optional) or with the configured authorization mode.
+7. AppSync resolves the request by calling the attached Direct Lambda Resolver. The identity of the requester is included in the request to the Lambda function
+8. The Lambda function resolves the query using the PostGraphile schema and RDS database
+
+For more information about the solution and a detailed walk-through, please see the related [blog](http://todo).
 
 ## Getting Started
 
@@ -30,6 +41,10 @@ cd ..
 
 If you do not have an existing database schema and data, you can leverage the provided [schema](vpc-with-pg/lib/layers/pg-dbschema-layer/lib/dbschema.sql) to get started. You can load the schema and some data by using the [`dbschema.ts`](vpc-with-pg/lib/functions/dbschema.ts) lambda function that was deployed in the previous step.
 
+**Note**: this lambda function also takes care of defining a database user `lambda_runner` (a user with restricted privileges) that will be used to execute all of our queries against the database.
+
+The schema defines a `Person` and `Post` table inside a database called `forum_demo_with_appsync`
+
 ```sh
 cd ./vpc-with-pg
 npm run load
@@ -45,7 +60,7 @@ You must use RDS Proxy with IAM authorization.
 
 ## Deploy the solution
 
-Use the `deploy` script to help configure your context and parameters. The script uses values from **vpc-with-pg**'s `output.json`.
+Use the `deploy` script to deploy the CDK solution. The script uses values from **vpc-with-pg**'s `output.json` to configure the stacks context environment and variables.
 
 ```bash
 cd ./pg-with-graphile
