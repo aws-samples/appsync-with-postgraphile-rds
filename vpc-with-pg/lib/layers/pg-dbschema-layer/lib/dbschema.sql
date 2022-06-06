@@ -15,7 +15,7 @@ comment on column forum_example.person.created_at is 'The time this person was c
 create type forum_example.post_topic as enum ( 'discussion', 'inspiration', 'help', 'showcase');
 
 create table forum_example.post ( id               serial primary key, author_username  text not null references forum_example.person(username), headline         text not null check (char_length(headline) < 280), body             text, topic            forum_example.post_topic, created_at       timestamp default now());
-
+comment on constraint "post_author_username_fkey" on forum_example.post is E'@foreignFieldName posts\n@fieldName author';
 comment on table forum_example.post is 'A forum post written by a user.';
 comment on column forum_example.post.id is 'The primary key for the post.';
 comment on column forum_example.post.headline is 'The title written by the user.';

@@ -87,11 +87,9 @@ export async function loadGraphqlSchema(pgConfig: Pool, schemas: string[], setti
       pgSimplifyAllRows: true,
       pgOmitListSuffix: true,
     },
-    ignoreIndexes: false,
-    ignoreRBAC: true,
     legacyRelations: 'omit',
+    ignoreRBAC: false,
     simpleCollections: 'only',
-    hideIndexWarnings: true,
     ...settings,
   })
 }
