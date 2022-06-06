@@ -9,6 +9,7 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
+    "deploy-demo": "node ./scripts/deploy-demo.js",
     "deploy": "node ./scripts/deploy.js",
     "update": "node ./scripts/update.js"
   },
