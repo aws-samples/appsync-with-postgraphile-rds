@@ -76,7 +76,8 @@ To get started, you need the following to enable connections to our database:
 * an RDS Proxy associated with our RDS Postgres database
   * we use [AWS Identity and Access Management (IAM) authentication for databases](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/rds-proxy.html)
   * and securely store credentials in AWS Secrets Manager.
-* a [VPC Security Group](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html) that allows connection to our RDS Proxy
+* at least one private subnet with a NAT that your AWS Lambda function ENIs will be deployed into, and a [VPC Security Group](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html)
+  * this security group must be an allowed source of traffic for your RDS Proxy security group
 
 You will also need to know the following information about our Postgres database:
 
@@ -93,7 +94,7 @@ Use the `deploy` script to deploy the CDK solution. The script uses values from 
 cd ./pg-with-graphile
 
 REGION="<region>"
-RDSPROXYNAME="<rdsproxyname>"
+RDSPROXYNAME="<rds-proxy-name>"
 SECURITYGROUPID="<security-group-id>"
 USERNAME="<username>"
 DATABASE="<database>"
