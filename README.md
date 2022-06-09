@@ -83,7 +83,7 @@ You will also need to know the following information about our Postgres database
 
 * database to connect to
 * schema(s) of interest (containing our tables and functions)
-* username/role to use to execute queries. This role should have the scoped-down privileges required to access the schema(s). See this [AWS blog](https://aws.amazon.com/blogs/database/overview-of-security-best-practices-for-amazon-rds-for-postgresql-and-amazon-aurora-postgresql-compatible-edition/) for more details on security best practices for Amazon RDS for PostgreSQL. The `provider` user the `postgres` role for configuration. The `resolver` users your provided username/role to run queries.
+* username/role to use to execute queries. This role should have the scoped-down privileges required to access the schema(s). See this [AWS blog](https://aws.amazon.com/blogs/database/overview-of-security-best-practices-for-amazon-rds-for-postgresql-and-amazon-aurora-postgresql-compatible-edition/) for more details on security best practices for Amazon RDS for PostgreSQL. The `provider` user the `postgres` role for configuration. The `resolver` uses your provided username/role to run queries.
 
 ### Deploy the solution
 
