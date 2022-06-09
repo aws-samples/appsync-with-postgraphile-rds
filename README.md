@@ -39,8 +39,9 @@ If you do not have an existing PostgreSQL RDS, the **vpc-with-pg** CDK app will 
 ### Deploy the VPC
 
 ```sh
+## from the top of `appsync-with-postgraphile-rds` directory
 cd ./vpc-with-pg
-npm run cdk deploy -- --all -O output.json
+npm run deploy
 ```
 
 ### Loading the database (optional)
@@ -56,12 +57,7 @@ The schema defines a `Person` and `Post` table inside a database called `forum_d
 npm run load
 ```
 
-### Clean up the VPC app
 
-```sh
-# in the `vpc-with-pg` directory
-npm run cdk destroy -- --all
-```
 
 ## The solution
 
@@ -102,11 +98,12 @@ SCHEMAS="<schemas>" # schemas to access. e.g: schema1,schema2,schema3
 npm run deploy -- --region $REGION --proxy $RDSPROXYNAME --sg $SECURITYGROUPID --username $USERNAME --database $DATABASE --schemas $SCHEMAS
 ```
 
-For example, if you deployed **vpc-with-pg** along with the demo data provided, you would run the following command:
+Note: If you deployed **vpc-with-pg** along with the demo data provided, you can simply run the `deploy-demo` npm command (which will use the values from the demo vpc stack):
 
 ```bash
-# in the `pg-with-graphile` directory
-npm run deploy -- --username lambda_runner --database forum_demo_with_appsync --schemas forum_example
+## from the top of `appsync-with-postgraphile-rds` directory
+cd ./pg-with-graphile
+npm run deploy-demo
 ```
 
 After deployment, run the `update` script to update your API and create your schema cache layer
@@ -118,9 +115,18 @@ npm run update
 
 Done.
 
-## Clean up the solution
+## Cleaning up up the solution
 
 When you are done with the solution, you can delete your resources by running the scripts below.
+
+Clean up the VPC app if needed:
+
+```sh
+# in the `vpc-with-pg` directory
+npm run cdk destroy -- --all
+```
+
+Then clean up the main solution
 
 ```sh
 # in the `pg-with-graphile` directory

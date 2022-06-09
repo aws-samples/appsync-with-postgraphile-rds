@@ -16,14 +16,9 @@ const endpoint = config.PgRdsStack.RDSProxyEndpoint
 async function run() {
   const args = arg({ '--username': String, '--database': String, '--schemas': String })
 
-  const reqs = [('--username', '--database', '--schemas')]
-  reqs.forEach((a) => {
-    if (!args[a]) throw new Error(`missing required argument: ${a}`)
-  })
-
-  const username = args['--username']
-  const database = args['--database']
-  const schemas = args['--schemas']
+  const username = args['--username'] || 'lambda_runner'
+  const database = args['--database'] || 'forum_demo_with_appsync'
+  const schemas = args['--schemas'] || 'forum_example'
 
   doNpmDeploy(vpcId, sgId, dbProxyArn, dbProxyName, endpoint, username, database, schemas)
 }
