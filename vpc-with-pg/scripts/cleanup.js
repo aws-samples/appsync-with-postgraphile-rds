@@ -12,5 +12,5 @@ async function run() {
   console.log(result)
 }
 
-console.log('Loading database')
+console.log('Cleaning up database')
 run()
