@@ -93,12 +93,12 @@ Use the `deploy` script to deploy the CDK solution. The script uses values from 
 ## from the top of `appsync-with-postgraphile-rds` directory
 cd ./pg-with-graphile
 
-REGION="<region>"
-RDSPROXYNAME="<rds-proxy-name>"
-SECURITYGROUPID="<security-group-id>"
-USERNAME="<username>"
-DATABASE="<database>"
-SCHEMAS="<schemas>"
+REGION="<region>" # the region your resources are running in, with at least one private subnet with NAT
+RDSPROXYNAME="<rds-proxy-name>" # the rds proxy name
+SECURITYGROUPID="<security-group-id>" # the security group to assign your Lambda Function ENI
+USERNAME="<username>" # username/role that will be used to execute SQL queries on database
+DATABASE="<database>" # database to connect to
+SCHEMAS="<schemas>" # schemas to access. e.g: schema1,schema2,schema3
 
 npm run deploy -- --region $REGION --proxy $RDSPROXYNAME --sg $SECURITYGROUPID --username $USERNAME --database $DATABASE --schemas $SCHEMAS
 ```
