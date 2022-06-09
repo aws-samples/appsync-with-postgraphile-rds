@@ -53,15 +53,14 @@ If you do not have an existing database schema and data, you can leverage the pr
 The schema defines a `Person` and `Post` table inside a database called `forum_demo_with_appsync`
 
 ```sh
-cd ./vpc-with-pg
+# in the `vpc-with-pg` directory
 npm run load
-cd ..
 ```
 
 ### Clean up the VPC app
 
 ```sh
-cd ./vpc-with-pg
+# in the `vpc-with-pg` directory
 npm run cdk destroy -- --all
 ```
 
@@ -106,14 +105,14 @@ npm run deploy -- --region $REGION --proxy $RDSPROXYNAME --sg $SECURITYGROUPID -
 For example, if you deployed **vpc-with-pg** along with the demo data provided, you would run the following command:
 
 ```bash
-cd ./pg-with-graphile
+# in the `pg-with-graphile` directory
 npm run deploy -- --username lambda_runner --database forum_demo_with_appsync --schemas forum_example
 ```
 
 After deployment, run the `update` script to update your API and create your schema cache layer
 
 ```bash
-# in the `./pg-with-graphile` directory
+# in the `pg-with-graphile` directory
 npm run update
 ```
 
@@ -124,7 +123,6 @@ Done.
 When you are done with the solution, you can delete your resources by running the scripts below.
 
 ```sh
-# in the `./pg-with-graphile` directory
-cd ./pg-with-graphile
+# in the `pg-with-graphile` directory
 npm run cdk destroy
 ```
