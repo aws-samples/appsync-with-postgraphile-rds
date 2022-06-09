@@ -19,7 +19,12 @@ This solution  leverages [PostGraphile](https://www.graphile.org/postgraphile/) 
 
 For more information about the solution and a detailed walk-through, please see the related [blog](http://todo).
 
-## Getting Started
+## Requirements
+
+* (Node.js ≥ 14.15.0)[https://nodejs.org/download/release/latest-v14.x/]
+* (Git)[https://git-scm.com/downloads]
+
+Clone this repository and install dependencies:
 
 ```sh
 git clone https://github.com/aws-samples/appsync-with-postgraphile-rds.git
@@ -64,7 +69,7 @@ npm run cdk destroy -- --all
 
 Deploy the solution into an existing vpc with RDS, or after **vpc-with-pg**.
 
-### Requirements
+### Solution Requirements
 
 To get started, you need the following to enable connections to our database:
 
@@ -78,17 +83,14 @@ You will also need to know the following information about our Postgres database
 
 * database to connect to
 * schema(s) of interest (containing our tables and functions)
-* username/role to use to execute queries. This role should have the scoped-down privileges required to access the schema(s). See this [AWS blog](https://aws.amazon.com/blogs/database/overview-of-security-best-practices-for-amazon-rds-for-postgresql-and-amazon-aurora-postgresql-compatible-edition/) for more details on security best practices for Amazon RDS for PostgreSQL.
+* username/role to use to execute queries. This role should have the scoped-down privileges required to access the schema(s). See this [AWS blog](https://aws.amazon.com/blogs/database/overview-of-security-best-practices-for-amazon-rds-for-postgresql-and-amazon-aurora-postgresql-compatible-edition/) for more details on security best practices for Amazon RDS for PostgreSQL. The `provider` user the `postgres` role for configuration. The `resolver` users your provided username/role to run queries.
 
 ### Deploy the solution
 
 Use the `deploy` script to deploy the CDK solution. The script uses values from **vpc-with-pg**'s `output.json` to configure the stacks context environment and variables.
 
 ```sh
-git clone https://github.com/aws-samples/appsync-with-postgraphile-rds.git
-cd appsync-with-postgraphile-rds
-npm install
-
+## from the top of `appsync-with-postgraphile-rds` directory
 cd ./pg-with-graphile
 
 REGION="<region>"
