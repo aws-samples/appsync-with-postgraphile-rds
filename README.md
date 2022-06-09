@@ -21,8 +21,8 @@ For more information about the solution and a detailed walk-through, please see 
 
 ## Requirements
 
-* (Node.js ≥ 14.15.0)[https://nodejs.org/download/release/latest-v14.x/]
-* (Git)[https://git-scm.com/downloads]
+* [Node.js ≥ 14.15.0](https://nodejs.org/download/release/latest-v14.x/)
+* [Git](https://git-scm.com/downloads)
 
 Clone this repository and install dependencies:
 
