@@ -32,7 +32,7 @@ cd appsync-with-postgraphile-rds
 npm install
 ```
 
-## Deploying a VPC with RDS (optional step)
+## Deploying a VPC with RDS (optional)
 
 If you do not have an existing PostgreSQL RDS, the **vpc-with-pg** CDK app will deploy a VPC with public and private subnets with NAT Gateway and provision an RDS instance into the private subnet.
 
@@ -66,7 +66,7 @@ npm run cdk destroy -- --all
 
 ## The solution
 
-Deploy the solution into an existing vpc with RDS, or after **vpc-with-pg**.
+Deploy the solution into an existing vpc with RDS, or after deploying **vpc-with-pg**.
 
 ### Solution Requirements
 

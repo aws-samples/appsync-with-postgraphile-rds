@@ -9,8 +9,8 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "deploy-demo": "node ./scripts/deploy-demo.js",
-    "deploy": "node ./scripts/deploy.js",
+    "deploy-demo": "node ./scripts/deploy-demo.mjs",
+    "deploy": "node ./scripts/deploy.mjs",
     "update": "node ./scripts/update.js"
   },
   "devDependencies": {

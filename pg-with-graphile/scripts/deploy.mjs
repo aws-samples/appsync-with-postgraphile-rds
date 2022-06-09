@@ -1,6 +1,6 @@
-const { spawn } = require('child_process')
-const arg = require('arg')
-const aws = require('aws-sdk')
+import { spawn } from 'child_process'
+import arg from 'arg'
+import aws from 'aws-sdk'
 
 const args = arg({
   '--region': String,
@@ -34,22 +34,28 @@ async function run() {
     const dbProxyName = proxy.DBProxyName
     const endpoint = proxy.Endpoint
 
-    const opts = `-c vpcId=${vpcId} \
---parameters sgId=${sgId} \
---parameters dbProxyArn=${dbProxyArn} \
---parameters dbProxyName=${dbProxyName} \
---parameters dbProxyEndpoint=${endpoint} \
---parameters userName=${args['--username']} \
---parameters database=${args['--database']} \
---parameters schemas=${args['--schemas']} \
--O output.json`.split(' ')
+    const username = args['--username']
+    const database = args['--database']
+    const schemas = args['--schemas']
 
-    const running = spawn('npm', ['run', 'cdk', 'deploy', '--', ...opts], { stdio: 'inherit' })
+    await doNpmDeploy(vpcId, sgId, dbProxyArn, dbProxyName, endpoint, username, database, schemas)
   } catch (error) {
     return console.log('Error: ' + error.message)
   }
-  console.log('Done')
 }
 
-console.log('Deploying...')
+export async function doNpmDeploy(vpcId, sgId, dbProxyArn, dbProxyName, endpoint, username, database, schemas) {
+  const opts = `-c vpcId=${vpcId} \
+  --parameters sgId=${sgId} \
+  --parameters dbProxyArn=${dbProxyArn} \
+  --parameters dbProxyName=${dbProxyName} \
+  --parameters dbProxyEndpoint=${endpoint} \
+  --parameters userName=${username} \
+  --parameters database=${database} \
+  --parameters schemas=${schemas} \
+  -O output.json`.split(/\s+/)
+
+  spawn('npm', ['run', 'cdk', 'deploy', '--', ...opts], { stdio: 'inherit' })
+}
+
 run()
