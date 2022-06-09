@@ -1,21 +1,19 @@
 {
-  "name": "pg-as-datasource-with-graphile",
+  "name": "appsync-with-postgraphile-sample",
   "version": "1.0.0",
   "description": "Monorepo Index - vpc-with-pg - pg-with-graphile",
   "main": "index.js",
   "scripts": {
-    "postinstall": "(cd vpc-with-pg && npm install); (cd vpc-with-pg/lib/layers/pg-dbschema-layer/nodejs && npm install); (cd pg-with-graphile && npm install); (cd pg-with-graphile/lib/layers/pg-as-datasource-layer/nodejs/ && npm install)",
-    "deploy-vpc-rds": "(cd vpc-with-pg && npm run cdk deploy -- --all -O output.json)",
-    "deploy": "cd pg-with-graphile; npm run deploy"
+    "postinstall": "(cd vpc-with-pg && npm install); (cd vpc-with-pg/lib/layers/pg-dbschema-layer/nodejs && npm install); (cd pg-with-graphile && npm install); (cd pg-with-graphile/lib/layers/pg-as-datasource-layer/nodejs/ && npm install)"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/onlybakam/pg-with-graphile-as-a-datasource.git"
+    "url": "git+https://github.com/aws-samples/appsync-with-postgraphile-rds.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/onlybakam/pg-with-graphile-as-a-datasource/issues"
+    "url": "https://github.com/aws-samples/appsync-with-postgraphile-rds/issues"
   },
-  "homepage": "https://github.com/onlybakam/pg-with-graphile-as-a-datasource#readme"
+  "homepage": "https://github.com/aws-samples/appsync-with-postgraphile-rds#readme"
 }

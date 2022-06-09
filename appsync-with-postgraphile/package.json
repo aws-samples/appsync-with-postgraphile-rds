@@ -1,5 +1,5 @@
 {
-  "name": "pg-as-datasource-with-graphile",
+  "name": "appsync-with-postgraphile",
   "version": "0.1.0",
   "bin": {
     "pg-as-datasource-with-graphile": "bin/pg-as-datasource-with-graphile.js"
