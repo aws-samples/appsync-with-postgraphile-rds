@@ -41,7 +41,6 @@ If you do not have an existing PostgreSQL RDS, the **vpc-with-pg** CDK app will 
 ```sh
 cd ./vpc-with-pg
 npm run cdk deploy -- --all -O output.json
-cd ..
 ```
 
 ### Loading the database (optional)
