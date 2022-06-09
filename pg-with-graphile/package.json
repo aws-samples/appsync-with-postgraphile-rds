@@ -11,7 +11,8 @@
     "cdk": "cdk",
     "deploy-demo": "node ./scripts/deploy-demo.mjs",
     "deploy": "node ./scripts/deploy.mjs",
-    "update": "node ./scripts/update.js"
+    "update": "node ./scripts/update.js",
+    "destroy": "npm run cdk destroy"
   },
   "devDependencies": {
     "@graphile-contrib/pg-simplify-inflector": "^6.1.0",

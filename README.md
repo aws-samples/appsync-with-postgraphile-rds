@@ -117,18 +117,17 @@ Done.
 
 ## Cleaning up up the solution
 
-When you are done with the solution, you can delete your resources by running the scripts below.
-
-Clean up the VPC app if needed:
-
-```sh
-# in the `vpc-with-pg` directory
-npm run cdk destroy -- --all
-```
-
-Then clean up the main solution
+When you are done with the solution, you can delete your resources. 
 
 ```sh
 # in the `pg-with-graphile` directory
-npm run cdk destroy
+npm run destroy
 ```
+
+If needed, clean up the demo resources as well
+
+```sh
+# in the `vpc-with-pg` directory
+npm run destroy
+```
+
