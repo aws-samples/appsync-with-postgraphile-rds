@@ -9,7 +9,7 @@ This solution  leverages [PostGraphile](https://www.graphile.org/postgraphile/) 
 ## Solution Overview
 
 0. Start by deploying the CDK-based solution. The solution creates an AppSync API with a datasource that uses the resolver Lambda function, and an AppSync function that uses that datasource.
-1. Once the solution is deployed, a user runs the `provider` function to analyze the RDS PostgreSQL database and generate the GraphQL schema. 
+1. Once the solution is deployed, a user runs the `provider` function to analyze the RDS PostgreSQL database and generate the GraphQL schema.
 2. The `provider` function retrieves schema information from RDS database using Postgaphile
 3. The `provider` updates the Layer function attached to the `resolver` Lambda function and updates the AppSync API. It updates the schema, and properly sets up the queries, mutations, and subscriptions. Note that a user can repeat step 1 at any time (e.g.: after a database schema change) to update the AppSync API definition.
 4. The AppSync API is now ready to process requests. A GraphQL request is made.
