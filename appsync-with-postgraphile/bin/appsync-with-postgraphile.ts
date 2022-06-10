@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import 'source-map-support/register'
 import * as cdk from 'aws-cdk-lib'
-// import { PgWithGraphileAsADatasource as AppSyncWithPostgraphileRDS } from '../lib/pg-with-graphile-as-a-datasource'
 import { AppSyncWithPostgraphile } from '../lib/appsync-with-postgraphile'
 
 const app = new cdk.App()
