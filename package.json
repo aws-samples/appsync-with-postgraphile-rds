@@ -1,10 +1,10 @@
 {
-  "name": "appsync-with-postgraphile-sample",
+  "name": "appsync-with-postgraphile-rds",
   "version": "1.0.0",
-  "description": "Monorepo Index - vpc-with-pg - pg-with-graphile",
+  "description": "Monorepo Index - vpc-with-pg - appsync-with-postgraphile",
   "main": "index.js",
   "scripts": {
-    "postinstall": "(cd vpc-with-pg && npm install); (cd vpc-with-pg/lib/layers/pg-dbschema-layer/nodejs && npm install); (cd pg-with-graphile && npm install); (cd pg-with-graphile/lib/layers/pg-as-datasource-layer/nodejs/ && npm install)"
+    "postinstall": "(cd vpc-with-pg && npm install); (cd vpc-with-pg/lib/layers/pg-dbschema-layer/nodejs && npm install); (cd appsync-with-postgraphile && npm install); (cd appsync-with-postgraphile/lib/layers/pg-as-datasource-layer/nodejs/ && npm install)"
   },
   "repository": {
     "type": "git",

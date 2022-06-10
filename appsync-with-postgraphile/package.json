@@ -1,13 +1,12 @@
 {
-  "name": "appsync-with-postgraphile",
+  "name": "appsync-with-postgraphile-rds",
   "version": "0.1.0",
   "bin": {
-    "pg-as-datasource-with-graphile": "bin/pg-as-datasource-with-graphile.js"
+    "appsync-with-postgraphile-rds": "bin/appsync-with-postgraphile-rds.js"
   },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "jest",
     "cdk": "cdk",
     "deploy-demo": "node ./scripts/deploy-demo.mjs",
     "deploy": "node ./scripts/deploy.mjs",

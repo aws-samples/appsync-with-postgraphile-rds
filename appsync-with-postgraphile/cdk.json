@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node --prefer-ts-exts bin/pg-with-graphile-as-a-datasource.ts",
+  "app": "npx ts-node --prefer-ts-exts bin/appsync-with-postgraphile.ts",
   "watch": {
     "include": ["**"],
     "exclude": [

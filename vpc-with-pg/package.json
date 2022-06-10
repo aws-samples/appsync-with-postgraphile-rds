@@ -7,7 +7,6 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "jest",
     "cdk": "cdk",
     "deploy": "npm run cdk deploy -- --all -O output.json",
     "destroy": "npm run cdk destroy -- --all",

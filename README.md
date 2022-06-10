@@ -106,12 +106,16 @@ cd ./pg-with-graphile
 npm run deploy-demo
 ```
 
+Make note of the outputs.
+
 After deployment, run the `update` script to update your API and create your schema cache layer
 
 ```bash
 # in the `pg-with-graphile` directory
 npm run update
 ```
+
+You can visit your API query editor in the AppSync console by following the link specified by the output value `AppSyncWithPostgraphileStack.QueryEditorURL`.
 
 Done.
 

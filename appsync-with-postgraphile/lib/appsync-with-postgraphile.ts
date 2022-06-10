@@ -17,7 +17,7 @@ import { Architecture, Code, LayerVersion, Runtime } from 'aws-cdk-lib/aws-lambd
 import * as AppSync from '@aws-cdk/aws-appsync-alpha'
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam'
 
-export class PgWithGraphileAsADatasource extends Stack {
+export class AppSyncWithPostgraphile extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props)
 
@@ -61,7 +61,7 @@ export class PgWithGraphileAsADatasource extends Stack {
     const layer = new LayerVersion(this, 'pglayer', {
       compatibleRuntimes: [Runtime.NODEJS_14_X],
       code: Code.fromAsset(Path.join(__dirname, 'layers/pg-as-datasource-layer')),
-      description: 'pg-as-a-datasource libraries and utilities',
+      description: 'appsync-with-postgraphile libraries and utilities',
     })
 
     // lambda env variables
@@ -99,7 +99,7 @@ export class PgWithGraphileAsADatasource extends Stack {
 
     // api start
     const api = new AppSync.GraphqlApi(this, 'api', {
-      name: 'api-pg-rds',
+      name: 'api-with-postgraphile',
       authorizationConfig: {
         defaultAuthorization: {
           authorizationType: AppSync.AuthorizationType.API_KEY,
@@ -173,10 +173,19 @@ export class PgWithGraphileAsADatasource extends Stack {
     provider.addToRolePolicy(
       new PolicyStatement({
         actions: ['appsync:*'],
-        resources: [stack.formatArn({ service: 'appsync', resource: '*' })],
+        resources: [stack.formatArn({ service: 'appsync', resource: `*/${api.apiId}` })],
+      })
+    )
+    provider.addToRolePolicy(
+      new PolicyStatement({
+        actions: ['appsync:*'],
+        resources: [stack.formatArn({ service: 'appsync', resource: `*/${api.apiId}/*` })],
       })
     )
 
+    const url = `https://${region}.console.aws.amazon.com/appsync/home?region=${region}#/${api.apiId}/v1/queries`
+
+    new CfnOutput(this, 'QueryEditorURL', { value: url })
     new CfnOutput(this, 'resolverName', { value: resolver.functionName })
     new CfnOutput(this, 'providerName', { value: provider.functionName })
     new CfnOutput(this, 'appsyncApiID', { value: api.apiId })
