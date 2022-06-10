@@ -57,8 +57,6 @@ The schema defines a `Person` and `Post` table inside a database called `forum_d
 npm run load
 ```
 
-
-
 ## The solution
 
 Deploy the solution into an existing vpc with RDS, or after deploying **vpc-with-pg**.
@@ -86,7 +84,7 @@ Use the `deploy` script to deploy the CDK solution. The script uses values from 
 
 ```sh
 ## from the top of `appsync-with-postgraphile-rds` directory
-cd ./pg-with-graphile
+cd ./appsync-with-postgraphile
 
 REGION="<region>" # the region your resources are running in, with at least one private subnet with NAT
 RDSPROXYNAME="<rds-proxy-name>" # the rds proxy name
@@ -102,7 +100,7 @@ Note: If you deployed **vpc-with-pg** along with the demo data provided, you can
 
 ```bash
 ## from the top of `appsync-with-postgraphile-rds` directory
-cd ./pg-with-graphile
+cd ./appsync-with-postgraphile
 npm run deploy-demo
 ```
 
@@ -111,7 +109,7 @@ Make note of the outputs.
 After deployment, run the `update` script to update your API and create your schema cache layer
 
 ```bash
-# in the `pg-with-graphile` directory
+# in the `appsync-with-postgraphile` directory
 npm run update
 ```
 
@@ -121,10 +119,10 @@ Done.
 
 ## Cleaning up up the solution
 
-When you are done with the solution, you can delete your resources. 
+When you are done with the solution, you can delete your resources.
 
 ```sh
-# in the `pg-with-graphile` directory
+# in the `appsync-with-postgraphile` directory
 npm run destroy
 ```
 
@@ -134,4 +132,3 @@ If needed, clean up the demo resources as well
 # in the `vpc-with-pg` directory
 npm run destroy
 ```
-
