@@ -200,12 +200,14 @@ export function toFlatMap(
   to: { [key: string]: string },
   prefix?: string
 ) {
+  const SEP = '_'
+
   if (!from) {
     return to
   }
 
   Object.entries(from).forEach(([key, value]) => {
-    const nextPrefix = prefix ? `${prefix}.${key}` : key
+    const nextPrefix = prefix ? `${prefix}${SEP}${key}` : key
     if (typeof value === 'object') {
       toFlatMap(value, to, nextPrefix)
     } else {
