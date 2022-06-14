@@ -1,4 +1,4 @@
-# Serverless auto-generated GraphQL API with AWS AppSync and Postgraphile
+# Serverless auto-generated GraphQL API with AWS AppSync and PostGraphile
 
 ![A diagram of the architecture solution Overview](./overview.png "Solution Overview")
 
@@ -6,7 +6,7 @@ This repo provides a CDK-based solution that allows you to create an [AWS AppSyn
 
 This solution  leverages [PostGraphile](https://www.graphile.org/postgraphile/) to automatically generate an AppSync compliant schema from PostgreSQL tables, and uses Lambda functions to resolve GraphQL queries against a PostgreSQL database in [Amazon RDS](https://aws.amazon.com/rds/). The solution is serverless, and can be deployed in a few clicks. It uses the [AWS CDK](https://aws.amazon.com/cdk/), does not require writing any code, supports subscriptions, and works with any PostgreSQL database like [Amazon RDS for PostgreSQL](https://aws.amazon.com/rds/postgresql/) and [Amazon Aurora PostgreSQL](https://aws.amazon.com/rds/aurora/features/).
 
-- [Serverless auto-generated GraphQL API with AWS AppSync and Postgraphile](#serverless-auto-generated-graphql-api-with-aws-appsync-and-postgraphile)
+- [Serverless auto-generated GraphQL API with AWS AppSync and PostGraphile](#serverless-auto-generated-graphql-api-with-aws-appsync-and-postgraphile)
   - [Solution Overview](#solution-overview)
   - [Requirements](#requirements)
   - [Deploying a VPC with RDS (optional)](#deploying-a-vpc-with-rds-optional)
@@ -32,8 +32,8 @@ For more information about the solution and a detailed walk-through, please see 
 
 ## Requirements
 
-* [Node.js ≥ 14.15.0](https://nodejs.org/download/release/latest-v14.x/)
-* [Git](https://git-scm.com/downloads)
+- [Node.js ≥ 14.15.0](https://nodejs.org/download/release/latest-v14.x/)
+- [Git](https://git-scm.com/downloads)
 
 Clone this repository and install dependencies:
 
@@ -77,18 +77,18 @@ Deploy the solution into an existing vpc with RDS, or after deploying **vpc-with
 
 To get started, you need the following to enable connections to our database:
 
-* an RDS Postgres database
-* an RDS Proxy associated with our RDS Postgres database
-  * we use [AWS Identity and Access Management (IAM) authentication for databases](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/rds-proxy.html)
-  * and securely store credentials in AWS Secrets Manager.
-* at least one private subnet with a NAT that your AWS Lambda function ENIs will be deployed into, and a [VPC Security Group](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html)
-  * this security group must be an allowed source of traffic for your RDS Proxy security group
+- an RDS Postgres database
+- an RDS Proxy associated with our RDS Postgres database
+  - we use [AWS Identity and Access Management (IAM) authentication for databases](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/rds-proxy.html)
+  - and securely store credentials in AWS Secrets Manager.
+- at least one private subnet with a NAT that your AWS Lambda function ENIs will be deployed into, and a [VPC Security Group](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html)
+  - this security group must be an allowed source of traffic for your RDS Proxy security group
 
 You will also need to know the following information about our Postgres database:
 
-* database to connect to
-* schema(s) of interest (containing our tables and functions)
-* username/role to use to execute queries. This role should have the scoped-down privileges required to access the schema(s). See this [AWS blog](https://aws.amazon.com/blogs/database/overview-of-security-best-practices-for-amazon-rds-for-postgresql-and-amazon-aurora-postgresql-compatible-edition/) for more details on security best practices for Amazon RDS for PostgreSQL. The `provider` user the `postgres` role for configuration. The `resolver` uses your provided username/role to run queries.
+- database to connect to
+- schema(s) of interest (containing our tables and functions)
+- username/role to use to execute queries. This role should have the scoped-down privileges required to access the schema(s). See this [AWS post](https://aws.amazon.com/blogs/database/overview-of-security-best-practices-for-amazon-rds-for-postgresql-and-amazon-aurora-postgresql-compatible-edition/) for more details on security best practices for Amazon RDS for PostgreSQL. The `provider` uses the `postgres` role for configuration. The `resolver` uses your provided username/role to run queries.
 
 ### Deploy the solution
 
