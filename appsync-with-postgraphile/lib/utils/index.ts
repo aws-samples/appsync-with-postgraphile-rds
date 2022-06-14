@@ -195,24 +195,23 @@ export function createDatabaseConnection(config: Config): Pool {
  * @param  {{[key:string]:string}} to
  * @param  {string} prefix?
  */
-export function toFlatMap(
-  from: { [key: string]: any } | null | undefined,
-  to: { [key: string]: string },
-  prefix?: string
-) {
-  const SEP = '_'
+export function toFlatMap(from: { [key: string]: any } | null | undefined, prefix?: string, sep?: string) {
+  const SEP = sep || '_'
 
   if (!from) {
-    return to
+    return {}
   }
+
+  let val: { [key: string]: string } = {}
 
   Object.entries(from).forEach(([key, value]) => {
     const nextPrefix = prefix ? `${prefix}${SEP}${key}` : key
     if (typeof value === 'object') {
-      toFlatMap(value, to, nextPrefix)
+      const inter = toFlatMap(value, nextPrefix)
+      val = { ...val, ...inter }
     } else {
-      to[nextPrefix] = value
+      val[nextPrefix] = value
     }
   })
-  return to
+  return val
 }

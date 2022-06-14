@@ -106,7 +106,7 @@ export const handler = async (event: AppSyncResolverEvent<any, any>): Promise<an
     identity: event.identity,
     ...(event.stash?.pgSettings || {}),
   }
-  const pgSettings = toFlatMap(inSettings, {})
+  const pgSettings = toFlatMap(inSettings, 'appsync', '.')
 
   console.log('pgSettings', pgSettings)
 

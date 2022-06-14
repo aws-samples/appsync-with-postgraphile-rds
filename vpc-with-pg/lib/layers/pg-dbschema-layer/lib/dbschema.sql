@@ -58,7 +58,7 @@ grant forum_example_anonymous to lambda_runner;
 create role forum_example_person;
 grant forum_example_person to lambda_runner;
 
-create function forum_example.current_person() returns forum_example.person as $$ select * from forum_example.person where username = current_setting('identity.username')::text $$ language sql stable;
+create function forum_example.current_person() returns forum_example.person as $$ select * from forum_example.person where username = current_setting('appsync.identity_username')::text $$ language sql stable;
 comment on function forum_example.current_person() is 'Gets the person who was identified by our cognito identity.';
 
 grant usage on schema forum_example to forum_example_anonymous, forum_example_person;
@@ -85,15 +85,15 @@ create policy select_person on forum_example.person for select using (true);
 
 create policy select_post on forum_example.post for select using (true);
 
-create policy update_person on forum_example.person for update to forum_example_person using (username = current_setting('identity.username')::text);
+create policy update_person on forum_example.person for update to forum_example_person using (username = current_setting('appsync.identity_username')::text);
 
-create policy delete_person on forum_example.person for delete to forum_example_person using (username = current_setting('identity.username')::text);
+create policy delete_person on forum_example.person for delete to forum_example_person using (username = current_setting('appsync.identity_username')::text);
 
-create policy insert_post on forum_example.post for insert to forum_example_person with check (author_username = current_setting('identity.username')::text);
+create policy insert_post on forum_example.post for insert to forum_example_person with check (author_username = current_setting('appsync.identity_username')::text);
 
-create policy update_post on forum_example.post for update to forum_example_person using (author_username = current_setting('identity.username')::text);
+create policy update_post on forum_example.post for update to forum_example_person using (author_username = current_setting('appsync.identity_username')::text);
 
-create policy delete_post on forum_example.post for delete to forum_example_person using (author_username = current_setting('identity.username')::text);
+create policy delete_post on forum_example.post for delete to forum_example_person using (author_username = current_setting('appsync.identity_username')::text);
 
 commit;
 
