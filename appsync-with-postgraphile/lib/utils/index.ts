@@ -105,11 +105,11 @@ export function getWrappers(schema: GraphQLSchema) {
     if (typeName.match(/\w+Payload/)) {
       const type = types[typeName]
       if (isObjectType(type)) {
-        console.log('found:', typeName)
+        console.log('Payload Type:', typeName)
         for (const [fieldName, field] of Object.entries(type.getFields())) {
-          console.log('fieldname:', fieldName)
           const reg = new RegExp(`\\w+${fieldName}Payload`, 'i')
           if (typeName.match(reg)) {
+            console.log('  - found wrapped fieldname:', fieldName)
             wrappers[typeName] = {
               fieldName,
               fieldType: field.type.toString(),
