@@ -189,7 +189,11 @@ const createOrUpdatePipelineResolver = async (
   try {
     // console.log('start for', typeName, fieldName)
     const result = await appsyncClient.getResolver({ apiId, typeName, fieldName }).promise()
-    console.log(`Update resolver ${typeName}.${fieldName}`)
+    console.log(
+      `Skipping existing resolver ${typeName}.${fieldName} with functions ${result.resolver?.pipelineConfig?.functions?.join(
+        ','
+      )}`
+    )
     await appsyncClient.updateResolver(config).promise()
   } catch (error) {
     const e = error as Error & { code: string }
@@ -219,9 +223,8 @@ const createOrUpdateSubscriptionResolver = async (apiId: string, fieldName: stri
     ].join('\n'),
   }
   try {
-    // console.log('start for', typeName, fieldName)
     const result = await appsyncClient.getResolver({ apiId, typeName, fieldName }).promise()
-    console.log(`Update resolver ${typeName}.${fieldName}`)
+    console.log(`Skipping existing resolver ${typeName}.${fieldName}`)
     await appsyncClient.updateResolver(config).promise()
   } catch (error) {
     const e = error as Error & { code: string }
