@@ -15,6 +15,9 @@ This solution  leverages [PostGraphile](https://www.graphile.org/postgraphile/) 
   - [The solution](#the-solution)
     - [Solution Requirements](#solution-requirements)
     - [Deploy the solution](#deploy-the-solution)
+    - [Configuration](#configuration)
+      - [Passing settings](#passing-settings)
+      - [Updating after a database schema change](#updating-after-a-database-schema-change)
   - [Cleaning up up the solution](#cleaning-up-up-the-solution)
 
 ## Solution Overview
@@ -128,6 +131,41 @@ npm run update
 You can visit your API query editor in the AppSync console by following the link specified by the output value `AppSyncWithPostgraphileStack.QueryEditorURL`.
 
 Done.
+
+### Configuration
+
+#### Passing settings
+
+By default, the solution passes the caller's [identity](https://docs.aws.amazon.com/en_us/appsync/latest/devguide/resolver-context-reference.html#aws-appsync-resolver-context-reference-identity) to [`pgSettings`](https://www.graphile.org/postgraphile/usage-library/#pgsettings-function). You can pass additional data by setting your own `pgSettings` values in your AppSync pipeline resolver. To do this, attach your own Appsync function to your resolver and add your `pgSettings` object to the stash. Note that the `PG_CONNECTOR_FN` function must be the last function executed. Here's an example.
+
+Mapping template:
+
+```vtl
+$util.quiet($ctx.stash.put("pgSettings", {"some": "value", "domainName": $ctx.request.domainName, "nested": {"sub" : "lower level setting"}}))
+{
+  "payload": {}
+}
+```
+
+Response template:
+
+```vtl
+{}
+```
+
+The solution automatically flattens objects and adds the prefix `appsync.` to all your object keys. The example above produces the following settings:
+
+```json
+{
+  "appsync.domainName": "my.domain.com",
+  "appsync.some": "value",
+  "appsync.nested_sub": "lower level setting"
+}
+```
+
+#### Updating after a database schema change
+
+You can update you GraphQL schema at any time by calling `npm run update`. This will update your schema and set up any new resolvers. Existing resolvers will not be modified.
 
 ## Cleaning up up the solution
 
