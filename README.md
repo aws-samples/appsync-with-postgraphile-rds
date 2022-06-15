@@ -4,6 +4,8 @@
 
 This repo provides a CDK-based solution that allows you to create an [AWS AppSync](https://aws.amazon.com/appsync/) API from a defined Postgres database in AWS RDS.
 
+See this blog [post](https://aws.amazon.com/blogs/mobile/creating-serverless-graphql-apis-from-rds-databases-with-aws-appsync-and-postgraphile/) for additional information.
+
 This solution  leverages [PostGraphile](https://www.graphile.org/postgraphile/) to automatically generate an AppSync compliant schema from PostgreSQL tables, and uses Lambda functions to resolve GraphQL queries against a PostgreSQL database in [Amazon RDS](https://aws.amazon.com/rds/). The solution is serverless, and can be deployed in a few clicks. It uses the [AWS CDK](https://aws.amazon.com/cdk/), does not require writing any code, supports subscriptions, and works with any PostgreSQL database like [Amazon RDS for PostgreSQL](https://aws.amazon.com/rds/postgresql/) and [Amazon Aurora PostgreSQL](https://aws.amazon.com/rds/aurora/features/).
 
 - [Serverless auto-generated GraphQL API with AWS AppSync and PostGraphile](#serverless-auto-generated-graphql-api-with-aws-appsync-and-postgraphile)
