@@ -141,6 +141,7 @@ const updateAppSyncAPI = async (schema: GraphQLSchema) => {
     while (status !== 'SUCCESS') {
       console.log(`creattion status: ${status}...`)
       if (status === 'FAILED') {
+        console.error('>> Schema creation failed! <<', response)
         throw new Error(response.details)
       }
       await new Promise((r) => setTimeout(r, 250))

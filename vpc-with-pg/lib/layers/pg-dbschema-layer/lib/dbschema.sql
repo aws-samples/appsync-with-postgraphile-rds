@@ -3,7 +3,7 @@ begin;
 create schema forum_example;
 create schema forum_example_private;
 
-create table forum_example.person ( id serial primary key, username text unique, first_name text not null check (char_length(first_name) < 80), last_name text check (char_length(last_name) < 80), about text, created_at timestamp default now());
+create table forum_example.person ( id serial primary key, username text unique, first_name text not null check (char_length(first_name) < 80), last_name text check (char_length(last_name) < 80), about text, created_at timestamp with time zone default now());
 comment on table forum_example.person is 'A user of the forum.';
 comment on column forum_example.person.id is 'The primary unique identifier for the person.';
 comment on column forum_example.person.id is '@omit update';
@@ -14,7 +14,7 @@ comment on column forum_example.person.created_at is 'The time this person was c
 
 create type forum_example.post_topic as enum ( 'discussion', 'inspiration', 'help', 'showcase');
 
-create table forum_example.post ( id serial primary key, author_username text not null references forum_example.person(username), headline text not null check (char_length(headline) < 280), body text, topic forum_example.post_topic, created_at timestamp default now());
+create table forum_example.post ( id serial primary key, author_username text not null references forum_example.person(username), headline text not null check (char_length(headline) < 280), body text, topic forum_example.post_topic, created_at timestamp with time zone default now());
 comment on constraint "post_author_username_fkey" on forum_example.post is E'@foreignFieldName posts\n@fieldName author';
 comment on table forum_example.post is 'A forum post written by a user.';
 comment on column forum_example.post.id is 'The primary key for the post.';
@@ -40,8 +40,8 @@ comment on function forum_example.person_latest_post(forum_example.person) is 'G
 create function forum_example.search_posts(search text) returns setof forum_example.post as $$ select post.* from forum_example.post as post where post.headline ilike ('%' || search || '%') or post.body ilike ('%' || search || '%') $$ language sql stable;
 comment on function forum_example.search_posts(text) is 'Returns posts containing a given search term.';
 
-alter table forum_example.person add column updated_at timestamp default now();
-alter table forum_example.post add column updated_at timestamp default now();
+alter table forum_example.person add column updated_at timestamp with time zone default now();
+alter table forum_example.post add column updated_at timestamp with time zone default now();
 
 create function forum_example_private.set_updated_at() returns trigger as $$ begin new.updated_at := current_timestamp; return new; end; $$ language plpgsql;
 

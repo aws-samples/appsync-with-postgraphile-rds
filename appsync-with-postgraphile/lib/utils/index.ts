@@ -1,8 +1,20 @@
 import { MutationPayloadQueryPlugin, NodePlugin, SchemaBuilder } from 'graphile-build'
 import { makeWrapResolversPlugin } from 'graphile-utils'
 import simplifyInflectorPlugin from '@graphile-contrib/pg-simplify-inflector'
-import { GraphQLInputFieldConfigMap, GraphQLSchema, printSchema } from 'graphql'
-import { GraphQLNonNull, isObjectType } from 'graphql/type/definition'
+import {
+  GraphQLFieldConfigMap,
+  GraphQLFloat,
+  GraphQLID,
+  GraphQLInt,
+  GraphQLInputFieldConfigMap,
+  GraphQLNullableType,
+  GraphQLScalarType,
+  GraphQLSchema,
+  GraphQLString,
+  isNonNullType,
+  printSchema,
+} from 'graphql'
+import { GraphQLNonNull, isObjectType, isScalarType } from 'graphql/type/definition'
 import { createPostGraphileSchema, makePluginHook } from 'postgraphile'
 import { Pool } from 'pg'
 
@@ -27,6 +39,23 @@ const forceNullablePlugin = (builder: SchemaBuilder) => {
   })
 }
 
+const AWSID = GraphQLID
+const NonNullAWSID = new GraphQLNonNull(AWSID)
+const AWSFloat = GraphQLFloat
+const NonNullFloat = new GraphQLNonNull(AWSFloat)
+const AWSInt = GraphQLInt
+const NonNullInt = new GraphQLNonNull(AWSInt)
+const AWSString = GraphQLString
+const NonNullString = new GraphQLNonNull(AWSString)
+const AWSDate = new GraphQLScalarType({ name: 'AWSDate' })
+const NonNullAWSDate = new GraphQLNonNull(AWSDate)
+const AWSDateTime = new GraphQLScalarType({ name: 'AWSDateTime' })
+const NonNullAWSDateTime = new GraphQLNonNull(AWSDateTime)
+const AWSTime = new GraphQLScalarType({ name: 'AWSDateTime' })
+const NonNullAWSTime = new GraphQLNonNull(AWSTime)
+const AWSJson = new GraphQLScalarType({ name: 'AWSJSON' })
+const NonNullAWSJson = new GraphQLNonNull(AWSJson)
+
 /**
  * make sure we remove nested query from Query type
  * @param  {SchemaBuilder} builder
@@ -45,42 +74,97 @@ const removeNestedQueryFieldPlugin = (builder: SchemaBuilder) => {
         delete fields[name]
       }
     }
+    updateObjectTypes(fields)
     return fields
   })
+
   builder.hook('GraphQLInputObjectType:fields', (fields) => {
     if (fields['clientMutationId']) {
       delete fields['clientMutationId']
     }
+    updateInputTypes(fields)
     return fields
   })
 }
-/**
- * Simple Plugin to turn a date into a valid AWSAppSyncDate format
- */
-const makeIso8601CompliantDatePlugin = makeWrapResolversPlugin(
-  (context) => {
-    const name = context.scope.fieldName
-    if (name === 'createdAt' || name === 'updatedAt') {
-      return { scope: context.scope }
+interface GenericField {
+  type: GraphQLScalarType
+}
+interface NonNullGenericField {
+  type: GraphQLNonNull<GraphQLNullableType>
+}
+const replacer = (field: GenericField) => {
+  const things = [
+    { name: 'UUID', check: (val: String) => val === 'UUID', update: () => AWSID },
+    { name: 'Cursor', check: (val: String) => val === 'Cursor', update: () => AWSString },
+    { name: 'Int', check: (val: String) => val === 'BigInt', update: () => AWSInt },
+    { name: 'Float', check: (val: String) => val === 'BigFloat', update: () => AWSFloat },
+    { name: 'AWSDate', check: (val: String) => val === 'Date', update: () => AWSDate },
+    { name: 'AWSDateTime', check: (val: String) => val === 'Datetime', update: () => AWSDateTime },
+    { name: 'AWSTime', check: (val: String) => val === 'Time', update: () => AWSTime },
+    { name: 'AWSJson', check: (val: String) => val === 'JSON', update: () => AWSJson },
+  ]
+  things.forEach((rule) => {
+    if (rule.check(field.type.name)) {
+      field.type = rule.update()
     }
-    return null
-  },
-  ({ scope }) =>
-    async (resolver, source, args, context, info) => {
-      // console.log(`Handling '${scope.fieldName}' starting with arguments:`, args)
-      const result = await resolver(source, args, context, info)
-      // console.log(`Result '${scope.fieldName}' result:`, result)
-      return new Date(result).toISOString()
+  })
+}
+
+const nonNullReplacer = (field: NonNullGenericField) => {
+  const things = [
+    { name: 'UUID', check: (val: String) => val === 'UUID!', update: () => NonNullAWSID },
+    { name: 'Cursor', check: (val: String) => val === 'Cursor!', update: () => NonNullString },
+    { name: 'Int', check: (val: String) => val === 'BigInt!', update: () => NonNullInt },
+    { name: 'Float', check: (val: String) => val === 'BigFloat!', update: () => NonNullFloat },
+    { name: 'NonNullAWSDate', check: (val: String) => val === 'Date!', update: () => NonNullAWSDate },
+    { name: 'NonNullAWSDateTime', check: (val: String) => val === 'Datetime!', update: () => NonNullAWSDateTime },
+    { name: 'AWSTime', check: (val: String) => val === 'Time!', update: () => NonNullAWSTime },
+    { name: 'NonNullAWSJson', check: (val: String) => val === 'JSON!', update: () => NonNullAWSJson },
+  ]
+  if (isScalarType(field.type.ofType)) {
+    // console.log('>>> found non null scalar', field.type.ofType)
+    things.forEach((rule) => {
+      if (rule.check(field.type.toString())) {
+        field.type = rule.update()
+      }
+    })
+  }
+}
+
+function updateInputTypes(fields: GraphQLInputFieldConfigMap) {
+  Object.entries(fields).forEach(([k, field]) => {
+    if (isScalarType(field.type)) {
+      replacer(field as GenericField)
     }
-)
+    if (isNonNullType(field.type)) {
+      nonNullReplacer(field as NonNullGenericField)
+    }
+  })
+}
+function updateObjectTypes(fields: GraphQLFieldConfigMap<any, any>) {
+  Object.entries(fields).forEach(([k, field]) => {
+    if (isScalarType(field.type)) {
+      replacer(field as GenericField)
+    }
+    if (isNonNullType(field.type)) {
+      nonNullReplacer(field as NonNullGenericField)
+    }
+    if (field.args) {
+      Object.entries(field.args).forEach(([k, arg]) => {
+        if (isScalarType(arg.type)) {
+          replacer(arg as GenericField)
+        }
+        if (isNonNullType(arg.type)) {
+          nonNullReplacer(arg as NonNullGenericField)
+        }
+      })
+    }
+  })
+}
+
 export async function loadGraphqlSchema(pgConfig: Pool, schemas: string[], settings?: any) {
   return await createPostGraphileSchema(pgConfig, schemas, {
-    appendPlugins: [
-      simplifyInflectorPlugin,
-      forceNullablePlugin,
-      removeNestedQueryFieldPlugin,
-      makeIso8601CompliantDatePlugin,
-    ],
+    appendPlugins: [simplifyInflectorPlugin, forceNullablePlugin, removeNestedQueryFieldPlugin],
     skipPlugins: [NodePlugin, MutationPayloadQueryPlugin],
     graphileBuildOptions: {
       pgShortPk: true,
@@ -105,11 +189,11 @@ export function getWrappers(schema: GraphQLSchema) {
     if (typeName.match(/\w+Payload/)) {
       const type = types[typeName]
       if (isObjectType(type)) {
-        console.log('Payload Type:', typeName)
+        // console.log('Payload Type:', typeName)
         for (const [fieldName, field] of Object.entries(type.getFields())) {
           const reg = new RegExp(`\\w+${fieldName}Payload`, 'i')
           if (typeName.match(reg)) {
-            console.log('  - found wrapped fieldname:', fieldName)
+            // console.log('  - found wrapped fieldname:', fieldName)
             wrappers[typeName] = {
               fieldName,
               fieldType: field.type.toString(),
@@ -126,19 +210,25 @@ export function getWrappers(schema: GraphQLSchema) {
  * @param  {GraphQLSchema} schema
  */
 export function toAppSyncSchema(schema: GraphQLSchema) {
-  const str = printSchema(schema)
+  const str = printSchema(schema, { commentDescriptions: true })
+  console.log('>>> pre appsync schema')
+  console.log(str)
+  console.log('<<< pre appsync schema')
+
   const printed = str
-    .replace(/(\s|\[)BigInt/g, '$1Int')
-    .replace(/(\s|\[)BigFloat/g, '$1Float')
-    .replace(/(\s|\[)Cursor/g, '$1String')
-    .replace(/(\s|\[)Time/g, '$1String')
-    .replace(/(\s|\[)Datetime/g, '$1AWSDateTime')
-    .replace(/(\s|\[)UUID/g, '$1ID')
+    // .replace(/(\s|\[)BigInt/g, '$1Int')
+    // .replace(/(\s|\[)BigFloat/g, '$1Float')
+    // .replace(/(\s|\[)Cursor/g, '$1String')
+    // .replace(/(\s|\[)Time/g, '$1String')
+    // .replace(/(\s|\[)Datetime/g, '$1AWSDateTime')
+    // .replace(/(\s|\[)Date/g, '$1AWSDate')
+    // .replace(/(\s|\[)UUID/g, '$1ID')
     .replace(/scalar .*\n/g, '')
-    .replace(/ *#.*\n/g, '')
+    // .replace(/ *#.*\n/g, '')
     .replace(/\n *\n/g, '\n')
 
-  return convertComments(printed)
+  return printed
+  // return convertComments(printed)
 }
 /**
  * Takes in a schema string and transofrms multi-line comments into single line comments
