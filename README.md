@@ -57,7 +57,7 @@ If you do not have an existing PostgreSQL RDS, the **vpc-with-pg** CDK app will 
 ```sh
 ## from the top of `appsync-with-postgraphile-rds` directory
 cd ./vpc-with-pg
-npm run cdk bootstrap # make sur CDK has been bootstrap (optional)
+npm run cdk bootstrap # make sure CDK has been bootstrap (optional)
 npm run deploy
 ```
 

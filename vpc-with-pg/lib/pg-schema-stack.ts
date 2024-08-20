@@ -26,9 +26,9 @@ export class PgSchemaStack extends Stack {
 
     // layer with all the libraries required to use postgraphile
     const layer = new LayerVersion(this, 'pglayer', {
-      compatibleRuntimes: [Runtime.NODEJS_14_X],
+      compatibleRuntimes: [Runtime.NODEJS_20_X],
       code: Code.fromAsset(Path.join(__dirname, 'layers/pg-dbschema-layer')),
-      description: 'pg-dbschema sql',
+      description: 'pg-dbschema sql ' + Date.now().toString(),
     })
 
     // lambda env variables
@@ -57,6 +57,8 @@ export class PgSchemaStack extends Stack {
     // db schema function
     const dbSchemaHandler = new NodejsFunction(this, 'dbSchemaHandler', {
       entry: Path.join(__dirname, 'functions', 'dbschema.ts'),
+      runtime: Runtime.NODEJS_20_X,
+      description: Date.now().toString(),
       ...lambdaConfig,
     })
     props.rdsProxy.grantConnect(dbSchemaHandler, 'postgres')
