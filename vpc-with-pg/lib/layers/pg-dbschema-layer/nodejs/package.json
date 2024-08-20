@@ -7,10 +7,10 @@
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "dependencies": {
+        "aws-sdk": "^2.1678.0",
         "pg": "^8.7.3"
     },
     "keywords": [],
     "author": "",
-    "license": "ISC",
-    "devDependencies": {}
+    "license": "ISC"
 }

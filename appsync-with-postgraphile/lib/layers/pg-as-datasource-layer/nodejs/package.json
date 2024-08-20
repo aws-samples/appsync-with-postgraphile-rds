@@ -9,6 +9,7 @@
   "dependencies": {
     "@graphile-contrib/pg-simplify-inflector": "^6.1.0",
     "adm-zip": "^0.5.9",
+    "aws-sdk": "^2.1678.0",
     "constructs": "^10.0.0",
     "graphile-build": "^4.12.2",
     "graphql": "^15.8.0",

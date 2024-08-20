@@ -59,9 +59,9 @@ export class AppSyncWithPostgraphile extends Stack {
 
     // layer with all the libraries required to use postgraphile
     const layer = new LayerVersion(this, 'pglayer', {
-      compatibleRuntimes: [Runtime.NODEJS_14_X],
+      compatibleRuntimes: [Runtime.NODEJS_20_X],
       code: Code.fromAsset(Path.join(__dirname, 'layers/pg-as-datasource-layer')),
-      description: 'appsync-with-postgraphile libraries and utilities',
+      description: 'appsync-with-postgraphile libraries and utilities ' + Date.now().toString(),
     })
 
     // lambda env variables
@@ -112,6 +112,8 @@ export class AppSyncWithPostgraphile extends Stack {
     // resolver function
     const resolver = new NodejsFunction(this, 'resolver', {
       entry: Path.join(__dirname, 'functions', 'resolver.ts'),
+      runtime: Runtime.NODEJS_20_X,
+      description: Date.now().toString(),
       ...lambdaConfig,
       timeout: Duration.seconds(29),
     })
@@ -136,6 +138,8 @@ export class AppSyncWithPostgraphile extends Stack {
     lambdaConfig.environment!.USERNAME = `postgres`
     const provider = new NodejsFunction(this, 'providerFn', {
       entry: Path.join(__dirname, 'functions', 'provider.ts'),
+      runtime: Runtime.NODEJS_20_X,
+      description: Date.now().toString(),
       ...lambdaConfig,
     })
     proxy.grantConnect(provider, lambdaConfig.environment!.USERNAME)
