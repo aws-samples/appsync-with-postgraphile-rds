@@ -1,0 +1,19 @@
+{
+  "name": "pg-as-datasource-layer",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+    "@aws-sdk/client-appsync": "^3.844.0",
+    "@aws-sdk/client-lambda": "^3.844.0",
+    "@aws-sdk/rds-signer": "^3.844.0",
+    "@graphile-contrib/pg-simplify-inflector": "^6.1.0",
+    "adm-zip": "^0.5.9",
+    "graphile-build": "^4.14.1",
+    "graphql": "^15.8.0",
+    "pg": "^8.16.3",
+    "postgraphile": "^4.14.1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
