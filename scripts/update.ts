@@ -4,6 +4,7 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 interface StackOutput {
   AppSyncWithPostgraphileStack: {
     providerName: string;
+    region: string;
   };
 }
 
@@ -12,7 +13,7 @@ async function run(): Promise<void> {
     const config: StackOutput = JSON.parse(readFileSync('output.json', 'utf8'));
     
     const lambdaClient = new LambdaClient({ 
-      region: 'us-east-1' 
+      region: config.AppSyncWithPostgraphileStack.region
     });
 
     const command = new InvokeCommand({
