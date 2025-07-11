@@ -1,0 +1,13 @@
+{
+    "rds_proxy_arn": "<rds_proxy_arn>",
+    "db_name": "<database name>",
+    "db_schemas": [ 
+        "<database schema to introspect (optional)>",
+        "<additional database schema (optional)>"
+    ],
+    "db_username": "<database user for authentication>",
+    "vpc_id": "<existing vpc_id>",
+    "sg_ids": [
+        "<security group ids for Lambda to RDS Proxy>"
+    ]
+}
