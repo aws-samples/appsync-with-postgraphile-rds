@@ -1,0 +1,3 @@
+# update your schema: `npm run update`
+
+type Query { temp: String }
