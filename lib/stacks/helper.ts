@@ -3,7 +3,7 @@ import Ajv from 'ajv';
 
 export interface Config {
     region?: string;
-    rds_proxy_arn?: string;
+    rds_proxy_name?: string;
     db_name?: string;
     db_schemas?: string[];
     db_username?: string;
@@ -46,8 +46,8 @@ const sample_config_schema = {
 const existing_config_schema = {
     type: 'object',
     properties: {
-        rds_proxy_arn: {
-            $ref: '#/definitions/RdsProxyArn'
+        rds_proxy_name: {
+            type: 'string'
         },
         db_name: {
             type: 'string'
@@ -75,7 +75,7 @@ const existing_config_schema = {
             minItems: 1
         }
     },
-    required: ['rds_proxy_arn', 'db_name', 'db_username', 'vpc_id', 'sg_ids'],
+    required: ['rds_proxy_name', 'db_name', 'db_username', 'vpc_id', 'sg_ids'],
     additionalProperties: false,
     definitions: {
         RdsProxyArn: {

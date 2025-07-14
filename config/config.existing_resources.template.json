@@ -1,5 +1,5 @@
 {
-    "rds_proxy_arn": "<rds_proxy_arn>",
+    "rds_proxy_name": "<rds_proxy_name>",
     "db_name": "<database name>",
     "db_schemas": [ 
         "<database schema to introspect (optional)>",

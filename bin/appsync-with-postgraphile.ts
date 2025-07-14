@@ -108,7 +108,7 @@ if (config_validation.deployment === "DEPLOY_SAMPLE_VPC_RDS_RESOURCES") {
     env: envConfig,
     vpc: vpcStack.vpc,
     securityGroupIds: [rdsStack.lambdaSecurityGroup.securityGroupId],
-    rdsProxyArn: rdsStack.rdsProxy.dbProxyArn,
+    rdsProxy: rdsStack.rdsProxy.dbProxyArn,
     port: PG_PORT,
     dbName: config.db_name || sample_db_name, // You may need to adjust this based on your RDS setup
     dbSchemas: config.db_schemas || sample_db_schemas, // Default schemas for sample data
@@ -128,7 +128,7 @@ if (config_validation.deployment === "DEPLOY_SAMPLE_VPC_RDS_RESOURCES") {
     env: envConfig,
     vpcId: config.vpc_id!,
     securityGroupIds: config.sg_ids!,
-    rdsProxyArn: config.rds_proxy_arn!,
+    rdsProxy: config.rds_proxy_name!,
     port: PG_PORT,
     dbName: config.db_name!,
     dbSchemas: config.db_schemas!,

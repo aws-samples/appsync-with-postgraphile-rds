@@ -13,6 +13,7 @@ import {
   LayerVersion,
   Runtime,
 } from 'aws-cdk-lib/aws-lambda';
+import { AwsCustomResource, AwsCustomResourcePolicy } from 'aws-cdk-lib/custom-resources';
 import * as path from 'path';
 
 export interface AppSyncWithPostgraphileProps extends cdk.StackProps {
@@ -20,7 +21,7 @@ export interface AppSyncWithPostgraphileProps extends cdk.StackProps {
   vpcId?: string;
   port: number;
   securityGroupIds: string[];
-  rdsProxyArn: string;
+  rdsProxy: (string|rds.DatabaseProxy);
   dbName: string;
   dbSchemas: string[];
   dbUsername: string;
@@ -42,7 +43,6 @@ export class AppSyncWithPostgraphileStack extends cdk.Stack {
       vpc,
       vpcId,
       securityGroupIds,
-      rdsProxyArn,
       dbName,
       dbSchemas,
       dbUsername,
@@ -64,13 +64,29 @@ export class AppSyncWithPostgraphileStack extends cdk.Stack {
     const securityGroups = securityGroupIds.map((sgId) => SecurityGroup.fromSecurityGroupId(this, 
       `sg-${sgId}`, sgId, { mutable: false }));
 
-    const rdsProxy = rds.DatabaseProxy.fromDatabaseProxyAttributes(this, 'rdsProxy', {
-      dbProxyArn: rdsProxyArn,
-      dbProxyName: '',
-      endpoint: '',
-      securityGroups: []
+    let rdsProxy: rds.IDatabaseProxy;
+    if(typeof props.rdsProxy === 'string') {
+      const proxyInfo = new AwsCustomResource(this, 'DescribeDBProxy', {
+      onCreate: {
+        service: '@aws-sdk/client-rds',
+        action: 'DescribeDBProxiesCommand',
+        parameters: {
+          DBProxyName: props.rdsProxy,
+        },
+      },
+      policy: AwsCustomResourcePolicy.fromSdkCalls({ resources: AwsCustomResourcePolicy.ANY_RESOURCE }),
     });
-
+    //Token.asString
+      rdsProxy = rds.DatabaseProxy.fromDatabaseProxyAttributes(this, 'ImportDBProxy', {
+        dbProxyName: proxyInfo.getResponseField('DBProxies.0.DBProxyName'),
+        dbProxyArn: proxyInfo.getResponseField('DBProxies.0.DBProxyArn'),
+        endpoint: proxyInfo.getResponseField('DBProxies.0.endpoint'),
+        securityGroups: []
+      });
+    } else {
+      rdsProxy = props.rdsProxy;
+    }
+    
     // layer with all the libraries required to use postgraphile
     const pgLayer = new LayerVersion(this, 'pgLayer', {
       compatibleRuntimes: [Runtime.NODEJS_20_X, Runtime.NODEJS_22_X, Runtime.NODEJS_LATEST],
