@@ -141,7 +141,7 @@ function updateInputTypes(fields: GraphQLInputFieldConfigMap) {
   })
 }
 function updateObjectTypes(fields: GraphQLFieldConfigMap<any, any>) {
-  Object.entries(fields).forEach(([, field]) => {
+  Object.entries(fields).forEach(([k, field]) => {
     if (isScalarType(field.type)) {
       replacer(field as GenericField)
     }
@@ -149,7 +149,7 @@ function updateObjectTypes(fields: GraphQLFieldConfigMap<any, any>) {
       nonNullReplacer(field as NonNullGenericField)
     }
     if (field.args) {
-      Object.entries(field.args).forEach(([, arg]) => {
+      Object.entries(field.args).forEach(([k, arg]) => {
         if (isScalarType(arg.type)) {
           replacer(arg as GenericField)
         }

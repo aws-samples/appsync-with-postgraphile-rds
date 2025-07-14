@@ -4,7 +4,7 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 interface StackOutput {
   PgSchemaStack: {
     dbSchemaHandlerName: string;
-    REGION: string;
+    Region: string;
   };
 }
 
@@ -13,7 +13,7 @@ async function run(): Promise<void> {
     const config: StackOutput = JSON.parse(readFileSync('../output.json', 'utf8'));
     
     const lambdaClient = new LambdaClient({ 
-      region: config.PgSchemaStack.REGION 
+      region: config.PgSchemaStack.Region 
     });
 
     const command = new InvokeCommand({

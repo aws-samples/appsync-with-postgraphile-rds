@@ -75,5 +75,6 @@ export class PgSchemaStack extends Stack {
     props.lambdaRunnerSecret.grantRead(dbSchemaHandler);
 
     new CfnOutput(this, 'dbSchemaHandlerName', { value: dbSchemaHandler.functionName });
+    new CfnOutput(this, 'Region', { value: Aws.REGION });
   }
 }
