@@ -13,7 +13,7 @@ import {
   LayerVersion,
   Runtime,
 } from 'aws-cdk-lib/aws-lambda';
-import { AwsCustomResource, AwsCustomResourcePolicy } from 'aws-cdk-lib/custom-resources';
+import { AwsCustomResource, AwsCustomResourcePolicy, PhysicalResourceId } from 'aws-cdk-lib/custom-resources';
 import * as path from 'path';
 
 export interface AppSyncWithPostgraphileProps extends cdk.StackProps {
@@ -65,24 +65,36 @@ export class AppSyncWithPostgraphileStack extends cdk.Stack {
       `sg-${sgId}`, sgId, { mutable: false }));
 
     let rdsProxy: rds.IDatabaseProxy;
+  
     if(typeof props.rdsProxy === 'string') {
       const proxyInfo = new AwsCustomResource(this, 'DescribeDBProxy', {
-      onCreate: {
-        service: '@aws-sdk/client-rds',
-        action: 'DescribeDBProxiesCommand',
-        parameters: {
-          DBProxyName: props.rdsProxy,
-        },
+        onCreate: {
+          service: '@aws-sdk/client-rds',
+          action: 'DescribeDBProxiesCommand',
+          parameters: {
+            DBProxyName: props.rdsProxy,
+          },
+          physicalResourceId: PhysicalResourceId.of("CustomSdkDescribeDBProxy"),
+      },
+      onUpdate: {
+          service: '@aws-sdk/client-rds',
+          action: 'DescribeDBProxiesCommand',
+          parameters: {
+            DBProxyName: props.rdsProxy,
+          },
+          physicalResourceId: PhysicalResourceId.of("CustomSdkDescribeDBProxy"),
       },
       policy: AwsCustomResourcePolicy.fromSdkCalls({ resources: AwsCustomResourcePolicy.ANY_RESOURCE }),
     });
+
     //Token.asString
       rdsProxy = rds.DatabaseProxy.fromDatabaseProxyAttributes(this, 'ImportDBProxy', {
         dbProxyName: proxyInfo.getResponseField('DBProxies.0.DBProxyName'),
         dbProxyArn: proxyInfo.getResponseField('DBProxies.0.DBProxyArn'),
-        endpoint: proxyInfo.getResponseField('DBProxies.0.endpoint'),
+        endpoint: proxyInfo.getResponseField('DBProxies.0.Endpoint'),
         securityGroups: []
       });
+
     } else {
       rdsProxy = props.rdsProxy;
     }
