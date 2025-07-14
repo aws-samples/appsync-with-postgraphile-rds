@@ -28,8 +28,8 @@ const PG_SCHEMAS = (process.env.PG_SCHEMAS || 'postgres').split(',')
 const signer = new Signer({
   region: process.env.AWS_REGION,
   port: PORT,
-  username: process.env.USERNAME || 'postgres',
-  hostname: process.env.RDS_PROXY_URL || '',
+  username: process.env.USERNAME!,
+  hostname: process.env.RDS_PROXY_URL!,
 })
 
 let pgPool: Pool
@@ -40,9 +40,9 @@ export const handler = async (event: any): Promise<any> => {
   try {
     const config = {
       database: process.env.DATABASE!,
-      user: process.env.USERNAME || 'postgres',
+      user: process.env.USERNAME!,
       password: await signer.getAuthToken(),
-      host: process.env.RDS_PROXY_URL || '',
+      host: process.env.RDS_PROXY_URL!,
       port: PORT,
     }
 
@@ -138,7 +138,7 @@ const updateAppSyncAPI = async (schema: GraphQLSchema) => {
         subFields.push(op)
         const field = fields[fieldName]
         const type = field.type.toString()
-        subscriptions += ` ${op}(filter: String): ${type} @aws_subscribe(mutations: ['${fieldName}'])\n`
+        subscriptions += ` ${op}(filter: String): ${type} @aws_subscribe(mutations: ["${fieldName}"])\n`
       }
       subscriptions += `}`
       console.log(subscriptions)
@@ -152,22 +152,37 @@ const updateAppSyncAPI = async (schema: GraphQLSchema) => {
 
     // remove unused payloads
     definition = definition.replace(/(^\s*#.*$)+\s*type\s+\w+Payload\s*{([^}]*)}/gm, '')
+    try {
 
-    // start schema creation
-    await appsyncClient.send(new StartSchemaCreationCommand({ apiId, definition: new TextEncoder().encode(definition) }))
-    let response = await appsyncClient.send(new GetSchemaCreationStatusCommand({ apiId }))
-    let status = response.status
-    while (status !== 'SUCCESS') {
-      console.log(`creattion status: ${status}...`)
-      if (status === 'FAILED') {
-        console.error('>> Schema creation failed! <<', response)
-        throw new Error(response.details)
+      const startSchemaCreationCommand = new StartSchemaCreationCommand({ 
+          apiId: apiId, 
+          definition: new TextEncoder().encode(definition)
+        });
+      // start schema creation
+      await appsyncClient.send(startSchemaCreationCommand);
+      let schemaCreationComplete = false;
+
+      while (!schemaCreationComplete) {
+        const getSchemaCreationStatusCommand = new GetSchemaCreationStatusCommand({
+          apiId: apiId,
+        });
+        const statusResponse = await appsyncClient.send(getSchemaCreationStatusCommand);
+        if (statusResponse.status === 'SUCCESS') {
+          schemaCreationComplete = true;
+          console.log('Schema update completed successfully.');
+        } else if (statusResponse.status === 'FAILED') {
+          throw new Error(`Schema update failed: ${statusResponse.details}`);
+        } else {
+          console.log(`Schema update status: ${statusResponse.status}`);
+          // wait for 2.5 seconds before checking again
+          await new Promise(resolve => setTimeout(resolve, 2500)); 
+        }
       }
-      await new Promise((r) => setTimeout(r, 250))
-      status = (await appsyncClient.send(new GetSchemaCreationStatusCommand({ apiId }))).status
+    } catch (error) {
+      console.error("Error updating AppSync schema:", error);
+      throw error;
     }
-
-    console.log('completed schema update. continue api update')
+    console.log('AppSync Schema updated successfully. Continuing api update')
 
     // create a pipeline resolver for Queries and Mutations
     for (const typeName of typeNames) {
@@ -201,7 +216,7 @@ const createOrUpdatePipelineResolver = async (
     fieldName,
     kind: 'PIPELINE' as const,
     requestMappingTemplate: wrapper
-      ? [`$util.qr($ctx.stash.put('wrapper', '${wrapper.fieldName}'))`, '{}'].join('\n')
+      ? [`$util.qr($ctx.stash.put("wrapper", "${wrapper.fieldName}"))`, '{}'].join('\n')
       : '{}',
     responseMappingTemplate: '$util.toJson($ctx.result)',
     pipelineConfig: { functions: [fnId] },
@@ -216,7 +231,7 @@ const createOrUpdatePipelineResolver = async (
     )
     await appsyncClient.send(new UpdateResolverCommand(config))
   } catch (error) {
-    const e = error as Error & { code: string }
+    const e = error as Error & { name: string }
     if (e.name === 'NotFoundException') {
       console.log(`Create resolver ${typeName}.${fieldName}`)
       await appsyncClient.send(new CreateResolverCommand(config))
@@ -234,7 +249,7 @@ const createOrUpdateSubscriptionResolver = async (apiId: string, fieldName: stri
     typeName,
     fieldName,
     dataSourceName: 'NONE',
-    requestMappingTemplate: "{ 'version': '2017-02-28', 'payload': {} }",
+    requestMappingTemplate: '{ "version": "2017-02-28", "payload": {} }',
     responseMappingTemplate: [
       '#if (!$util.isNullOrEmpty($ctx.args.filter))',
       '$extensions.setSubscriptionFilter($util.transform.toSubscriptionFilter($util.parseJson($ctx.args.filter)))',
@@ -247,7 +262,7 @@ const createOrUpdateSubscriptionResolver = async (apiId: string, fieldName: stri
     console.log(`Skipping existing resolver ${typeName}.${fieldName}`)
     await appsyncClient.send(new UpdateResolverCommand(config))
   } catch (error) {
-    const e = error as Error & { code: string }
+    const e = error as Error & { name: string }
     if (e.name === 'NotFoundException') {
       console.log(`Create resolver ${typeName}.${fieldName}`)
       await appsyncClient.send(new CreateResolverCommand(config))

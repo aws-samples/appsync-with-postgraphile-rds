@@ -14,8 +14,8 @@ const PG_SCHEMAS = (process.env.PG_SCHEMAS || 'postgres').split(',');
 const signer = new Signer({
   region: process.env.AWS_REGION,
   port: PORT,
-  username: process.env.USERNAME || 'postgres',
-  hostname: process.env.RDS_PROXY_URL || '',
+  username: process.env.USERNAME!,
+  hostname: process.env.RDS_PROXY_URL!,
 });
 
 let pgPool: Pool;
@@ -63,9 +63,9 @@ async function init() {
     reset();
     const config = {
       database: process.env.DATABASE!,
-      user: process.env.USERNAME || 'postgres',
+      user: process.env.USERNAME!,
       password: await signer.getAuthToken(),
-      host: process.env.RDS_PROXY_URL || '',
+      host: process.env.RDS_PROXY_URL!,
       port: PORT,
     };
     pgPool = createDatabaseConnection(config);
@@ -114,7 +114,7 @@ export const handler = async (
   const pgSettings = toFlatMap(inSettings, 'appsync', '.');
 
   console.log('pgSettings', pgSettings);
-
+  console.log(event);
   const pgCallback = (ctx: any) =>
     graphql(
       schema,
