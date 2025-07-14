@@ -86,7 +86,7 @@ Edit `config/config.json` with your existing AWS resources:
 
 ```json
 {
-    "rds_proxy_arn": "arn:aws:rds:us-east-1:123456789012:db-proxy:prx-0123456789abcdef0",
+    "rds_proxy_name": "the-proxy-identifier-name",
     "db_name": "your_database_name",
     "db_schemas": [
       "public",
@@ -101,7 +101,7 @@ Edit `config/config.json` with your existing AWS resources:
 ```
 
 **Field Descriptions:**
-- `rds_proxy_arn`: ARN of your existing RDS Proxy (format: `arn:aws:rds:region:account:db-proxy:prx-xxxxx`)
+- `rds_proxy_name`: Name of your existing RDS Proxy
 - `db_name`: Name of the PostgreSQL database to connect to
 - `db_schemas`: Array of database schemas to introspect (e.g., "public,sales,inventory"). 
 - `db_username`: Database username for query execution (should have limited privileges)
