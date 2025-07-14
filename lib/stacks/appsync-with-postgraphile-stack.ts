@@ -1,9 +1,17 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as appsync from 'aws-cdk-lib/aws-appsync';
-import {Vpc, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2';
+import {
+  Vpc,
+  SecurityGroup,
+  SubnetType
+} from 'aws-cdk-lib/aws-ec2';
 import * as rds from 'aws-cdk-lib/aws-rds';
-import { Role, ServicePrincipal, ManagedPolicy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { Role, 
+  ServicePrincipal,
+  ManagedPolicy,
+  PolicyStatement
+} from 'aws-cdk-lib/aws-iam';
 import { 
   NodejsFunction,
 } from 'aws-cdk-lib/aws-lambda-nodejs';
@@ -13,7 +21,11 @@ import {
   LayerVersion,
   Runtime,
 } from 'aws-cdk-lib/aws-lambda';
-import { AwsCustomResource, AwsCustomResourcePolicy, PhysicalResourceId } from 'aws-cdk-lib/custom-resources';
+import { 
+  AwsCustomResource,
+  AwsCustomResourcePolicy,
+  PhysicalResourceId
+} from 'aws-cdk-lib/custom-resources';
 import * as path from 'path';
 
 export interface AppSyncWithPostgraphileProps extends cdk.StackProps {
@@ -67,33 +79,8 @@ export class AppSyncWithPostgraphileStack extends cdk.Stack {
     let rdsProxy: rds.IDatabaseProxy;
   
     if(typeof props.rdsProxy === 'string') {
-      const proxyInfo = new AwsCustomResource(this, 'DescribeDBProxy', {
-        onCreate: {
-          service: '@aws-sdk/client-rds',
-          action: 'DescribeDBProxiesCommand',
-          parameters: {
-            DBProxyName: props.rdsProxy,
-          },
-          physicalResourceId: PhysicalResourceId.of("CustomSdkDescribeDBProxy"),
-      },
-      onUpdate: {
-          service: '@aws-sdk/client-rds',
-          action: 'DescribeDBProxiesCommand',
-          parameters: {
-            DBProxyName: props.rdsProxy,
-          },
-          physicalResourceId: PhysicalResourceId.of("CustomSdkDescribeDBProxy"),
-      },
-      policy: AwsCustomResourcePolicy.fromSdkCalls({ resources: AwsCustomResourcePolicy.ANY_RESOURCE }),
-    });
 
-    //Token.asString
-      rdsProxy = rds.DatabaseProxy.fromDatabaseProxyAttributes(this, 'ImportDBProxy', {
-        dbProxyName: proxyInfo.getResponseField('DBProxies.0.DBProxyName'),
-        dbProxyArn: proxyInfo.getResponseField('DBProxies.0.DBProxyArn'),
-        endpoint: proxyInfo.getResponseField('DBProxies.0.Endpoint'),
-        securityGroups: []
-      });
+      rdsProxy = this.lookupDbProxy(props.rdsProxy);
 
     } else {
       rdsProxy = props.rdsProxy;
@@ -186,9 +173,7 @@ export class AppSyncWithPostgraphileStack extends cdk.Stack {
     const lambdaFnResolver = new appsync.AppsyncFunction(this, 'pg-lambda-resolver-fn', {
       dataSource: lambdaDs,
       name: this.PG_LAMBDA_RESOLVER_FN,
-      api: graphqlApi,
-      code: appsync.Code.fromAsset(path.join(__dirname, '..', 'graphql', 'resolvers', 'baseLambdaResolver.js')),
-      runtime: appsync.FunctionRuntime.JS_1_0_0
+      api: graphqlApi
     });
 
     const providerFnRole = new Role(this, 'provider-lambda-role', {
@@ -235,13 +220,13 @@ export class AppSyncWithPostgraphileStack extends cdk.Stack {
       new PolicyStatement({
         sid: 'AllowPublishLayerVersions',
         actions: [
+          'lambda:ListLayerVersions',
           'lambda:GetLayerVersion',
           'lambda:PublishLayerVersion',
-          'lambda:AddLayerVersionPermission',
-          'lambda:ListLayerVersions',
           'lambda:DeleteLayerVersion',
           'lambda:GetLayerVersionPolicy',
-          'lambda:UpdateLayerVersionPermission',
+          'lambda:AddLayerVersionPermission',
+          'lambda:RemoveLayerVersionPermission',
         ],
         resources: [
           this.formatArn({
@@ -270,15 +255,49 @@ export class AppSyncWithPostgraphileStack extends cdk.Stack {
     provider.addToRolePolicy(
       new PolicyStatement({
         actions: ['appsync:*'],
-        resources: [graphqlApi.arn, `${graphqlApi.arn}/*`]
+        resources: [
+          graphqlApi.arn,
+          `${graphqlApi.arn}/*`, 
+          this.formatArn({ service: 'appsync', resource: `*/${graphqlApi.apiId}/*` }),
+        ]
       })
     );
 
-    const url = `https://${cdk.Aws.REGION}.console.aws.amazon.com/appsync/home?region=${cdk.Aws.REGION}#/${graphqlApi.apiId}/v1/queries`
+    const url = `https://${cdk.Aws.REGION}.console.aws.amazon.com/appsync/home?region=${cdk.Aws.REGION}#/${graphqlApi.apiId}/v1/queries`;
 
-    new cdk.CfnOutput(this, 'QueryEditorURL', { value: url })
-    new cdk.CfnOutput(this, 'resolverName', { value: resolver.functionName })
-    new cdk.CfnOutput(this, 'providerName', { value: provider.functionName })
-    new cdk.CfnOutput(this, 'appsyncApiID', { value: graphqlApi.apiId })
+    new cdk.CfnOutput(this, 'QueryEditorURL', { value: url });
+    new cdk.CfnOutput(this, 'resolverName', { value: resolver.functionName });
+    new cdk.CfnOutput(this, 'providerName', { value: provider.functionName });
+    new cdk.CfnOutput(this, 'appsyncApiID', { value: graphqlApi.apiId });
+    new cdk.CfnOutput(this, 'Region', { value: cdk.Aws.REGION });
+  }
+
+  private lookupDbProxy(DBProxyName: string): rds.IDatabaseProxy { 
+    const proxyInfo = new AwsCustomResource(this, 'DescribeDBProxy', {
+        onCreate: {
+          service: '@aws-sdk/client-rds',
+          action: 'DescribeDBProxiesCommand',
+          parameters: {
+            DBProxyName: DBProxyName,
+          },
+          physicalResourceId: PhysicalResourceId.of("CustomSdkDescribeDBProxy"),
+      },
+      onUpdate: {
+          service: '@aws-sdk/client-rds',
+          action: 'DescribeDBProxiesCommand',
+          parameters: {
+            DBProxyName: DBProxyName,
+          },
+          physicalResourceId: PhysicalResourceId.of("CustomSdkDescribeDBProxy"),
+      },
+      policy: AwsCustomResourcePolicy.fromSdkCalls({ resources: AwsCustomResourcePolicy.ANY_RESOURCE }),
+    });
+
+    return rds.DatabaseProxy.fromDatabaseProxyAttributes(this, 'ImportDBProxy', {
+        dbProxyName: proxyInfo.getResponseField('DBProxies.0.DBProxyName'),
+        dbProxyArn: proxyInfo.getResponseField('DBProxies.0.DBProxyArn'),
+        endpoint: proxyInfo.getResponseField('DBProxies.0.Endpoint'),
+        securityGroups: []
+      });
   }
 }
