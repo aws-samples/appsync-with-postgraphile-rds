@@ -1,0 +1,10 @@
+{
+    "deploy_sample_resources": true,
+    "load_sample_data": false,
+    "db_name": "<database name>",
+    "db_schemas": [
+        "<database schema to introspect (optional)>",
+        "<additional database schema (optional)>"
+    ],
+    "db_username": "<database user name>"
+}

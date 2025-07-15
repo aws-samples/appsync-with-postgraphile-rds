@@ -1,19 +1,48 @@
 {
   "name": "appsync-with-postgraphile-rds",
-  "version": "1.0.0",
-  "description": "Monorepo Index - vpc-with-pg - appsync-with-postgraphile",
-  "main": "index.js",
+  "version": "0.1.0",
+  "bin": {
+    "appsync-with-postgraphile-rds": "bin/appsync-with-postgraphile-rds.js"
+  },
   "scripts": {
-    "postinstall": "(cd vpc-with-pg && npm install); (cd vpc-with-pg/lib/layers/pg-dbschema-layer/nodejs && npm install); (cd appsync-with-postgraphile && npm install); (cd appsync-with-postgraphile/lib/layers/pg-as-datasource-layer/nodejs/ && npm install)"
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk",
+    "load-data": "npx ts-node scripts/load_data.ts",
+    "update": "npx ts-node scripts/update.ts",
+    "cleanup-data": "npx ts-node scripts/cleanup_data.ts"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/aws-samples/appsync-with-postgraphile-rds.git"
+  "devDependencies": {
+    "@aws-sdk/client-appsync": "^3.840.0",
+    "@aws-sdk/client-lambda": "^3.840.0",
+    "@aws-sdk/client-rds": "^3.844.0",
+    "@aws-sdk/client-secrets-manager": "^3.844.0",
+    "@aws-sdk/rds-signer": "^3.840.0",
+    "@graphile-contrib/pg-simplify-inflector": "^6.1.0",
+    "@types/adm-zip": "^0.5.7",
+    "@types/aws-lambda": "^8.10.150",
+    "@types/jest": "^29.5.14",
+    "@types/node": "22.7.9",
+    "@types/uuid": "^10.0.0",
+    "adm-zip": "^0.5.16",
+    "aws-cdk": "2.1020.2",
+    "esbuild": "^0.25.6",
+    "graphile-build": "^4.14.1",
+    "graphql": "^15.4.0",
+    "jest": "^29.7.0",
+    "pg": "^8.16.3",
+    "postgraphile": "^4.14.1",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.6.3",
+    "uuid": "^11.1.0"
   },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/aws-samples/appsync-with-postgraphile-rds/issues"
-  },
-  "homepage": "https://github.com/aws-samples/appsync-with-postgraphile-rds#readme"
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "aws-cdk-lib": "2.204.0",
+    "constructs": "^10.0.0",
+    "source-map-support": "^0.5.21"
+  }
 }

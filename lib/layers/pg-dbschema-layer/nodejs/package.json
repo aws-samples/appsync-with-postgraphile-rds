@@ -1,0 +1,13 @@
+{
+    "name": "pg-dbschema-layer",
+    "version": "1.0.0",
+    "description": "AWS Javascript SDK v3 and PG layer",
+    "dependencies": {
+        "@aws-sdk/client-secrets-manager": "^3.844.0",
+        "@aws-sdk/rds-signer": "^3.844.0",
+        "pg": "^8.16.3"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
+}
