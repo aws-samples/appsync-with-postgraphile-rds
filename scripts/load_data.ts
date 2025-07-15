@@ -10,7 +10,7 @@ interface StackOutput {
 
 async function run(): Promise<void> {
   try {
-    const config: StackOutput = JSON.parse(readFileSync('../output.json', 'utf8'));
+    const config: StackOutput = JSON.parse(readFileSync('output.json', 'utf8'));
     
     const lambdaClient = new LambdaClient({ 
       region: config.PgSchemaStack.Region 

@@ -166,7 +166,8 @@ async function executeSchemaSetup(): Promise<void> {
     client = await pgPool.connect();
 
     // Read and process SQL file
-    const sqlFilePath = "./dbschema.sql";
+    const dir = '/opt/lib'
+    const sqlFilePath = `${dir}/dbschema.sql`;
 
     if (!fs.existsSync(sqlFilePath)) {
       throw new Error(`SQL file not found: ${sqlFilePath}`);
