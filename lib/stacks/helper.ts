@@ -97,29 +97,6 @@ const existing_config_schema = {
     }
 };
 
-
-//     definitions: {
-//         RdsProxyArn: {
-//             type: 'string',
-//             pattern: 'arn:aws(-[\\w]+)*:rds:.+:[0-9]{12}:db-proxy:prx\-[a-zA-Z0-9\-]+'
-//             //'arn:aws:rds:us-east-1:180810609695:db-proxy:prx-0049428012bb6d0b9'
-//             // arn:${Partition}:rds:${Region}:${Account}:db-proxy:${DbProxyId}
-//         },
-//         VpcId: {
-//             type: 'string',
-//             pattern: 'vpc-\\w{8}(\\w{9})?'
-//         },
-//         SubnetId: {
-//             type: 'string',
-//             pattern: 'subnet-\\w{8}(\\w{9})?'
-//         },
-//         SecurityGroupId: {
-//             type: 'string',
-//             pattern: 'sg-\\w{8}(\\w{9})?'
-//         }
-//     }
-// };
-
 const ajv = new Ajv();
 const validateSampleResourceConfig = ajv.compile(sample_config_schema);
 const validateExistingResourceConfig = ajv.compile(existing_config_schema);
