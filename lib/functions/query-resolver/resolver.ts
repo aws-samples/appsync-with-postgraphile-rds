@@ -113,8 +113,8 @@ export const handler = async (
   };
   const pgSettings = toFlatMap(inSettings, 'appsync', '.');
 
-  console.log('pgSettings', pgSettings);
-  console.log(event);
+  console.log('pgSettings:', pgSettings);
+
   const pgCallback = (ctx: any) =>
     graphql(
       schema,
@@ -127,6 +127,7 @@ export const handler = async (
     { pgPool, pgSettings },
     pgCallback
   );
+  
   if (result.errors) {
     console.error('ERROR:', result.errors);
     const error = new Error(result.errors[0].message);

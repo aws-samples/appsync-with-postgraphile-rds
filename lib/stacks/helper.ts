@@ -132,7 +132,12 @@ let type;
     if ( 'deploy_sample_resources' in config && config.deploy_sample_resources ) {
         console.log('checking sample_resources config')
         validate= validateSampleResourceConfig;
-        type = 'DEPLOY_SAMPLE_VPC_RDS_RESOURCES';
+        if('load_sample_data' in config && config.load_sample_data)
+        {
+            type = 'DEPLOY_SAMPLE_VPC_RDS_RESOURCES_SAMPLE_DATA';
+        } else {
+            type = 'DEPLOY_SAMPLE_VPC_RDS_RESOURCES_NO_DATA';
+        }
     } else {
         validate = validateExistingResourceConfig;
         type = 'USE_EXISTING_VPC_RDS_RESOURCES';

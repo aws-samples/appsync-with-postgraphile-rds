@@ -188,7 +188,7 @@ This creates:
 
 ```bash
 # Deploy all stacks (VPC, RDS, and AppSync)
-npm run cdk deploy
+npm run cdk deploy --all
 ```
 
 
