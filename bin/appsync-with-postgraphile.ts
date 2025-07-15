@@ -73,13 +73,13 @@ if (config_validation.deployment === 'DEPLOY_SAMPLE_VPC_RDS_RESOURCES_SAMPLE_DAT
   // Deploy all stacks for sample resources
   console.log('Deploying with sample VPC and RDS configuration...');
 
-  const vpcStack = new PgVpcStack(app, `PgVpcStack${stage}`, {
+  const vpcStack = new PgVpcStack(app, `PgVpcStack`, {
     env: envConfig,
     cidr: '10.0.0.0/16',
     ...tagProps,
   });
 
-  const rdsStack = new PgRdsStack(app, `PgRdsStack${stage}`, {
+  const rdsStack = new PgRdsStack(app, `PgRdsStack`, {
     env: envConfig,
     vpc: vpcStack.vpc,
     port: PG_PORT,
@@ -90,7 +90,7 @@ if (config_validation.deployment === 'DEPLOY_SAMPLE_VPC_RDS_RESOURCES_SAMPLE_DAT
 
   if (config.load_sample_data) {
     // DEPLOYING SAMPLE DATABASE
-    new PgSchemaStack(app, `PgSchemaStack${stage}`, {
+    new PgSchemaStack(app, `PgSchemaStack`, {
       env: envConfig,
       vpc: vpcStack.vpc,
       stage: stage,
@@ -107,11 +107,11 @@ if (config_validation.deployment === 'DEPLOY_SAMPLE_VPC_RDS_RESOURCES_SAMPLE_DAT
 
 
   // Deploy AppSync stack with dependencies from created infrastructure
-  new AppSyncWithPostgraphileStack(app, `AppSyncWithPostgraphileStack${stage}`, {
+  new AppSyncWithPostgraphileStack(app, `AppSyncWithPostgraphileStack`, {
     env: envConfig,
     vpc: vpcStack.vpc,
     securityGroupIds: [rdsStack.lambdaSecurityGroup.securityGroupId],
-    rdsProxy: rdsStack.rdsProxy.dbProxyArn,
+    rdsProxy: rdsStack.rdsProxy,
     port: PG_PORT,
     dbName: config.db_name!, // You may need to adjust this based on your RDS setup
     dbSchemas: config.db_schemas!, // Default schemas for sample data
@@ -127,7 +127,7 @@ if (config_validation.deployment === 'DEPLOY_SAMPLE_VPC_RDS_RESOURCES_SAMPLE_DAT
 
 
   // Deploy only AppSync stack using existing infrastructure
-  new AppSyncWithPostgraphileStack(app, `AppSyncWithPostgraphileStack${stage}`, {
+  new AppSyncWithPostgraphileStack(app, `AppSyncWithPostgraphileStack`, {
     env: envConfig,
     vpcId: config.vpc_id!,
     securityGroupIds: config.sg_ids!,

@@ -80,7 +80,7 @@ export class PgRdsStack extends Stack {
       securityGroups: [ rdsSecurityGroup ],
       writer: rds.ClusterInstance.provisioned('writer', {
         publiclyAccessible: false,
-        instanceType: InstanceType.of(InstanceClass.M6G, InstanceSize.LARGE),
+        instanceType: InstanceType.of(InstanceClass.R8G, InstanceSize.LARGE),
       }),
       clusterIdentifier: `${props?.stage}-appsync-sample-PG`,      
       removalPolicy: RemovalPolicy.DESTROY, // this is a test solution, so want to destroy on delete
@@ -96,16 +96,6 @@ export class PgRdsStack extends Stack {
       secrets: [this.postgresSecret, this.lambdaRunnerSecret],
       debugLogging: true,
     });
-
-    // // Workaround for bug where TargetGroupName is not set but required
-    // let targetGroup = this.rdsProxy.node.children.find((child: any) => {
-    //   return child instanceof rds.CfnDBProxyTargetGroup
-    // }) as rds.CfnDBProxyTargetGroup
-
-    // targetGroup.addPropertyOverride('TargetGroupName', 'default')
-
-
-
 
     // output credentials
     new CfnOutput(this, 'RDS Admin Secret Name', { value: this.postgresSecret.secretName });
