@@ -30,7 +30,7 @@ export class PgSchemaStack extends Stack {
     // layer with all the libraries required to use postgraphile
     const pglayer = new LayerVersion(this, 'pglayer', {
       compatibleRuntimes: [Runtime.NODEJS_LATEST, Runtime.NODEJS_20_X, Runtime.NODEJS_22_X],
-      code: Code.fromAsset(Path.join(__dirname, 'layers/pg-dbschema-layer')),
+      code: Code.fromAsset(Path.join(__dirname, '..','layers','pg-dbschema-layer')),
       description: `pg-dbschema sql ${Date.now().toString()}`,
     });
 
@@ -57,7 +57,7 @@ export class PgSchemaStack extends Stack {
     });
 
     const dbSchemaHandler = new NodejsFunction(this, 'dbSchemaHandler', {
-      entry: Path.join(__dirname, 'functions', 'sample-db-setup', 'dbschema.ts'),
+      entry: Path.join(__dirname, '..', 'functions', 'sample-db-setup', 'dbschema.ts'),
       runtime: Runtime.NODEJS_22_X,
       architecture: Architecture.ARM_64,
       memorySize: 512,
